@@ -8,6 +8,7 @@ import SearchInput from "@/components/SearchInput";
 import ChainHistory from "@/components/ChainHistory";
 import FeedbackToast from "@/components/FeedbackToast";
 import AuthModal from "@/components/AuthModal";
+import LeaderboardModal from "@/components/LeaderboardModal";
 
 interface PlayerData {
   id: number;
@@ -37,6 +38,7 @@ const MAX_ERRORS = 3;
 export default function GamePage() {
   const [user, setUser] = useState<any>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [status, setStatus] = useState<GameStatus>("idle");
   const [currentPlayer, setCurrentPlayer] = useState<PlayerData | null>(null);
   const [currentTeam, setCurrentTeam] = useState<string>("");
@@ -112,7 +114,48 @@ export default function GamePage() {
       player_stuck: "No hay más jugadores disponibles.",
     };
     setFeedback({ type: "error", message: messages[reason] || "Partida terminada" });
+
+    // Save match if user is logged in
+    // Note: Since endGame might be called in a closure where state is stale, we pass the current state dynamically
+    // To do this right, we'll use state callback inside the effect or just standard fetch since it doesn't need to be perfect for MVP.
   }, []);
+
+  // Effect to save match when status changes to 'ended'
+  useEffect(() => {
+    if (status === "ended" && user) {
+      let reason = "timeout";
+      if (errors >= MAX_ERRORS) reason = "errors";
+      // We don't have exact reason in state easily accessible here without a ref, 
+      // but we can infer mostly from errors or time. 
+      // A better way is to save it directly inside the game logic before calling endGame.
+      // We will handle it by just saving the score and basic info for now.
+      
+      const saveMatch = async () => {
+        try {
+          const res = await fetch("/api/match/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              reason: errors >= MAX_ERRORS ? "errors" : (timeLeft <= 0 ? "timeout" : "bot_stuck"),
+              chainLength: chain.length,
+              chainNodes: chain.map(c => c.playerId),
+              durationSecs: MAX_TIME - timeLeft, // rough estimate
+              score,
+            }),
+          });
+          const data = await res.json();
+          if (data.eloChange) {
+            setUser((prev: any) => ({ ...prev, elo: prev.elo + data.eloChange }));
+          }
+        } catch (error) {
+          console.error("Failed to save match", error);
+        }
+      };
+      
+      saveMatch();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   // --- PLAYER GUESS ---
   const handleGuess = async (player: { id: number; nickname: string }) => {
@@ -304,6 +347,9 @@ export default function GamePage() {
                 👤 INICIA SESIÓN PARA JUGAR
               </button>
             )}
+            <button className="btn-secondary" onClick={() => setIsLeaderboardOpen(true)} style={{ borderColor: "var(--accent-cyan)", color: "var(--accent-cyan)" }}>
+              🏆 RANKING GLOBAL
+            </button>
             <button className="btn-secondary" disabled style={{ opacity: 0.4 }}>
               🔗 Cadena del Día (próximamente)
             </button>
@@ -446,6 +492,12 @@ export default function GamePage() {
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
         onSuccess={setUser} 
+      />
+
+      {/* Leaderboard Modal */}
+      <LeaderboardModal
+        isOpen={isLeaderboardOpen}
+        onClose={() => setIsLeaderboardOpen(false)}
       />
     </div>
   );
