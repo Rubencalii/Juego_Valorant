@@ -228,7 +228,13 @@ export default function DailyPage() {
             display: "flex", flexDirection: "column", alignItems: "center",
             width: "100%", gap: 24, padding: "32px 0"
           }}>
-            <PlayerCard player={currentPlayer} team={currentTeam} isActive={true} />
+            <PlayerCard 
+              nickname={currentPlayer.nickname}
+              realName={currentPlayer.realName}
+              countryCode={currentPlayer.countryCode}
+              teamName={currentTeam} 
+              isActive={true} 
+            />
             
             {status === "playing" && (
               <div style={{ width: "100%", maxWidth: 400 }}>

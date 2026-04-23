@@ -7,9 +7,9 @@ const DAILY_CHALLENGES = [
   { start: "TenZ", target: "Boaster" },
   { start: "yay", target: "Derke" },
   { start: "Aspas", target: "Chronicle" },
-  { start: "Stax", target: "Sacy" },
-  { start: "ScreaM", target: "FNS" },
-  { start: "cNed", target: "Keznit" },
+  { start: "stax", target: "Sacy" },
+  { start: "Scream", target: "FNS" },
+  { start: "Jamppi", target: "keznit" },
   { start: "Alfajer", target: "Zekken" },
 ];
 
@@ -25,8 +25,8 @@ export async function getDailyChallenge() {
 
   // Fetch the actual player records from DB
   const [startPlayer, targetPlayer] = await Promise.all([
-    prisma.player.findFirst({ where: { nickname: { equals: challenge.start, collation: 'NOCASE' } } }),
-    prisma.player.findFirst({ where: { nickname: { equals: challenge.target, collation: 'NOCASE' } } })
+    prisma.player.findFirst({ where: { nickname: challenge.start } }),
+    prisma.player.findFirst({ where: { nickname: challenge.target } })
   ]);
 
   return {
