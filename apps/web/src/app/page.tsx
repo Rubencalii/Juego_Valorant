@@ -350,8 +350,8 @@ export default function GamePage() {
             <button className="btn-secondary" onClick={() => setIsLeaderboardOpen(true)} style={{ borderColor: "var(--accent-cyan)", color: "var(--accent-cyan)" }}>
               🏆 RANKING GLOBAL
             </button>
-            <button className="btn-secondary" disabled style={{ opacity: 0.4 }}>
-              🔗 Cadena del Día (próximamente)
+            <button className="btn-secondary" onClick={() => window.location.href = '/daily'} style={{ borderColor: "var(--accent-red)", color: "var(--text-primary)" }}>
+              🔗 CADENA DEL DÍA
             </button>
           </div>
           <div style={{ display: "flex", gap: 20, color: "var(--text-muted)", fontSize: "0.7rem", fontFamily: "var(--font-mono)" }}>

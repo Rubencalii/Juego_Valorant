@@ -57,7 +57,7 @@ model User {
   nickname       String    @unique
   passwordHash   String
   avatarUrl      String?
-  elo            Int       @default(1000)
+  elo            Int       @default(0)
   gamesPlayed    Int       @default(0)
   gamesWon       Int       @default(0)
   bestChain      Int       @default(0)
