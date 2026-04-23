@@ -1,4 +1,4 @@
-# VALIX.GG — Software Requirements Specification (SRS)
+# SPIKELINK.GG — Software Requirements Specification (SRS)
 
 > Versión 1.0
 
@@ -8,11 +8,11 @@
 
 ### 1.1 Propósito
 
-Este documento describe los requisitos funcionales, no funcionales y de interfaz del sistema Valix.gg. Está dirigido al equipo de desarrollo y sirve como contrato entre el producto y la implementación técnica.
+Este documento describe los requisitos funcionales, no funcionales y de interfaz del sistema SpikeLink.gg. Está dirigido al equipo de desarrollo y sirve como contrato entre el producto y la implementación técnica.
 
 ### 1.2 Alcance
 
-Valix.gg es una aplicación web que permite a usuarios jugar, competir y mejorar en un minijuego de conexiones basado en el ecosistema competitivo de Valorant. El sistema abarca la experiencia del jugador, el motor de juego, el sistema de matchmaking y el ranking.
+SpikeLink.gg es una aplicación web que permite a usuarios jugar, competir y mejorar en un minijuego de conexiones basado en el ecosistema competitivo de Valorant. El sistema abarca la experiencia del jugador, el motor de juego, el sistema de matchmaking y el ranking.
 
 ### 1.3 Definiciones
 

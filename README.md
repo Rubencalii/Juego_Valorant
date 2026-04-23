@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎮 VALIX.GG
+# 🎮 SPIKELINK.GG
 **El juego definitivo de conexiones del ecosistema competitivo de Valorant**
 
 [![Status: WIP](https://img.shields.io/badge/Status-WIP-FF4655?style=for-the-badge)](https://github.com/Rubencalii/Juego_Valorant)
@@ -15,9 +15,9 @@
 
 <br />
 
-## 🌟 ¿Qué es Valix.gg?
+## 🌟 ¿Qué es SpikeLink.gg?
 
-**Valix.gg** es un minijuego web de ritmo trepidante en el que pondrás a prueba tu conocimiento sobre los equipos y jugadores profesionales de Valorant. El objetivo es encadenar jugadores que hayan compartido equipo en algún momento de sus carreras, ¡todo esto contrarreloj con tan solo 15 segundos de margen!
+**SpikeLink.gg** es un minijuego web de ritmo trepidante en el que pondrás a prueba tu conocimiento sobre los equipos y jugadores profesionales de Valorant. El objetivo es encadenar jugadores que hayan compartido equipo en algún momento de sus carreras, ¡todo esto contrarreloj con tan solo 15 segundos de margen!
 
 Conecta jugadores correctos, acumula rachas, sobrevive a la presión y compite contra tus amigos o la comunidad global para demostrar quién sabe más del ecosistema VCT.
 
@@ -27,7 +27,7 @@ Conecta jugadores correctos, acumula rachas, sobrevive a la presión y compite c
 
 | Pantalla Principal | Conexión Exitosa | Error / Tiempo Agotado |
 | :---: | :---: | :---: |
-| <img src="./diseño/valix_main_game/screen.png" width="300" alt="Main Game" /> | <img src="./diseño/valix_success_state/screen.png" width="300" alt="Success State" /> | <img src="./diseño/valix_error_state/screen.png" width="300" alt="Error State" /> |
+| <img src="./diseño/spikelink_main_game/screen.png" width="300" alt="Main Game" /> | <img src="./diseño/spikelink_success_state/screen.png" width="300" alt="Success State" /> | <img src="./diseño/spikelink_error_state/screen.png" width="300" alt="Error State" /> |
 
 ---
 
@@ -58,7 +58,7 @@ La arquitectura está diseñada en tres capas altamente desacopladas para garant
 
 ## 🚀 Guía de Instalación (Desarrollo Local)
 
-Sigue estos pasos para levantar el entorno completo de Valix en tu máquina local:
+Sigue estos pasos para levantar el entorno completo de SpikeLink en tu máquina local:
 
 ### 1. Clonar el repositorio
 ```bash
@@ -104,7 +104,7 @@ npm run dev
 
 Este es un proyecto Open Source creado por la comunidad y para la comunidad.
 
-**Aviso:** Valix.gg es un proyecto no oficial de fans y no está afiliado ni patrocinado por Riot Games. Valorant y todos los activos asociados son marcas registradas de Riot Games, Inc. Los datos de los jugadores se obtienen respetando los términos de servicio de fuentes públicas como Liquipedia.
+**Aviso:** SpikeLink.gg es un proyecto no oficial de fans y no está afiliado ni patrocinado por Riot Games. Valorant y todos los activos asociados son marcas registradas de Riot Games, Inc. Los datos de los jugadores se obtienen respetando los términos de servicio de fuentes públicas como Liquipedia.
 
 ---
 <div align="center">

@@ -1,10 +1,10 @@
-# VALIX.GG — Guía de Contribución & Onboarding Dev
+# SPIKELINK.GG — Guía de Contribución & Onboarding Dev
 
 ---
 
 ## 1. Bienvenida
 
-Bienvenido al equipo de Valix.gg. Este documento te guiará desde cero hasta tener tu entorno local completamente funcional y listo para contribuir. Léelo de arriba a abajo la primera vez; está ordenado para minimizar bloqueos.
+Bienvenido al equipo de SpikeLink.gg. Este documento te guiará desde cero hasta tener tu entorno local completamente funcional y listo para contribuir. Léelo de arriba a abajo la primera vez; está ordenado para minimizar bloqueos.
 
 Si algo no funciona o encuentras información desactualizada, abre un issue en GitHub con la etiqueta `docs` o actualiza el documento directamente. **La documentación es responsabilidad de todos.**
 
@@ -30,8 +30,8 @@ Si algo no funciona o encuentras información desactualizada, abre un issue en G
 
 **1.** Clona el repositorio y entra en la carpeta:
 ```bash
-git clone https://github.com/tu-usuario/valix-gg.git
-cd valix-gg
+git clone https://github.com/tu-usuario/spikelink-gg.git
+cd spikelink-gg
 ```
 
 **2.** Instala todas las dependencias del monorepo:
@@ -213,5 +213,5 @@ Todo Pull Request debe incluir:
 |---|---|
 | **GitHub Issues** | Bugs y tareas. Usar la etiqueta correspondiente. |
 | **GitHub Discussions** | Discusiones de diseño y propuestas de features. |
-| **Discord (#valix-dev)** | Comunicación de equipo en tiempo real. |
+| **Discord (#spikelink-dev)** | Comunicación de equipo en tiempo real. |
 | **`docs/decisions/`** | Decisiones de producto documentadas en el repo. |

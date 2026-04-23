@@ -1,4 +1,4 @@
-# VALIX.GG
+# SPIKELINK.GG
 
 > _El juego de conexiones del ecosistema competitivo de Valorant_
 
@@ -9,9 +9,9 @@
 
 ---
 
-## ¿Qué es Valix.gg?
+## ¿Qué es SpikeLink.gg?
 
-Valix.gg es un minijuego web de ritmo rápido estilo "conexiones" ambientado en el ecosistema competitivo de Valorant. Los jugadores deben encadenar jugadores profesionales que hayan compartido equipo oficial en algún momento de sus carreras, todo ello contra un temporizador de 15 segundos.
+SpikeLink.gg es un minijuego web de ritmo rápido estilo "conexiones" ambientado en el ecosistema competitivo de Valorant. Los jugadores deben encadenar jugadores profesionales que hayan compartido equipo oficial en algún momento de sus carreras, todo ello contra un temporizador de 15 segundos.
 
 La mecánica es sencilla de aprender y difícil de dominar: cada conexión correcta reinicia el reloj y activa el turno del rival. Un error, un jugador repetido o un timeout significa la derrota. La complejidad del grafo de relaciones —transferencias, equipos de academia, stand-ins— es lo que hace el juego infinitamente rejugable.
 
@@ -49,7 +49,7 @@ La mecánica es sencilla de aprender y difícil de dominar: cada conexión corre
 ## Estructura del Repositorio
 
 ```
-valix.gg/
+spikelink.gg/
 ├── apps/
 │   ├── web/                  # Next.js app
 │   │   ├── app/              # App Router (layouts, pages)
@@ -80,7 +80,7 @@ valix.gg/
 
 1. Clona el repositorio:
 ```bash
-git clone https://github.com/tu-usuario/valix-gg.git && cd valix-gg
+git clone https://github.com/tu-usuario/spikelink-gg.git && cd spikelink-gg
 ```
 
 2. Instala dependencias:
@@ -130,4 +130,4 @@ NEXT_PUBLIC_SOCKET_URL=http://localhost:3001
 
 ## Licencia y Descargo
 
-Valix.gg es un proyecto de fan no afiliado a Riot Games. Valorant y todos los activos asociados son marcas registradas de Riot Games, Inc. Los datos de jugadores se obtienen de fuentes públicas (Liquipedia, VLR.gg) respetando sus términos de servicio.
+SpikeLink.gg es un proyecto de fan no afiliado a Riot Games. Valorant y todos los activos asociados son marcas registradas de Riot Games, Inc. Los datos de jugadores se obtienen de fuentes públicas (Liquipedia, VLR.gg) respetando sus términos de servicio.

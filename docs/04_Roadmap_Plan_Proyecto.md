@@ -1,4 +1,4 @@
-# VALIX.GG — Roadmap & Plan de Proyecto
+# SPIKELINK.GG — Roadmap & Plan de Proyecto
 
 ---
 
@@ -96,7 +96,7 @@ La calidad de los datos de Liquipedia varía por región. Los datos de PCS (Pac�
 - [ ] Configurar Vercel Analytics y el primer dashboard de métricas (DAU, partidas por día, modo más jugado).
 - [ ] Hardening de seguridad: rate limiting con Upstash Ratelimit, validación exhaustiva de inputs en todos los endpoints.
 - [ ] SEO básico: meta tags, Open Graph para la Cadena del Día, sitemap.
-- [ ] Deploy a producción: dominio `valix.gg`, certificado SSL, variables de entorno de producción.
+- [ ] Deploy a producción: dominio `spikelink.gg`, certificado SSL, variables de entorno de producción.
 
 ### Criterios de Aceptación
 

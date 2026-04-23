@@ -1,10 +1,10 @@
-# VALIX.GG — Arquitectura Técnica Detallada
+# SPIKELINK.GG — Arquitectura Técnica Detallada
 
 ---
 
 ## 1. Visión General del Sistema
 
-Valix.gg sigue una arquitectura de tres capas desacopladas:
+SpikeLink.gg sigue una arquitectura de tres capas desacopladas:
 
 1. **Frontend** — Next.js desplegado en Vercel.
 2. **Servidor de WebSockets** — Servidor Socket.io independiente en Railway para partidas en tiempo real.

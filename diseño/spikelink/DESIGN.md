@@ -1,5 +1,5 @@
 ---
-name: Valix
+name: SpikeLink
 colors:
   surface: '#0a141e'
   surface-dim: '#0a141e'
