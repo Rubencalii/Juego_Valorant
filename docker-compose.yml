@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  spikelink-db:
+    image: postgres:15-alpine
+    container_name: spikelink-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: spikelink
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Este volumen inicializa la BD automáticamente con nuestro schema la primera vez
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
