@@ -295,9 +295,15 @@ export default function GamePage() {
             Tienes <strong style={{ color: "var(--accent-red)" }}>15 segundos</strong> por turno.
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", maxWidth: 280 }}>
-            <button className="btn-primary" onClick={startGame}>
-              ⚡ Jugar vs Bot
-            </button>
+            {user ? (
+              <button className="btn-primary" onClick={startGame}>
+                ⚡ JUGAR VS BOT
+              </button>
+            ) : (
+              <button className="btn-primary" onClick={() => setIsAuthModalOpen(true)}>
+                👤 INICIA SESIÓN PARA JUGAR
+              </button>
+            )}
             <button className="btn-secondary" disabled style={{ opacity: 0.4 }}>
               🔗 Cadena del Día (próximamente)
             </button>
