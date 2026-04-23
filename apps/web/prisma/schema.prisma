@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Player {
+  id          Int      @id @default(autoincrement())
+  nickname    String   @unique
+  aliases     String   @default("[]") // JSON array of historical nicknames
+  realName    String?
+  countryCode String?
+  imageUrl    String?
+  twitterUrl  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rosters Roster[]
+}
+
+model Team {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  logoUrl   String?
+  region    String?  // EMEA, Americas, Pacific, CN
+  isAcademy Boolean  @default(false)
+  parentId  Int?
+  parent    Team?    @relation("TeamAcademy", fields: [parentId], references: [id])
+  children  Team[]   @relation("TeamAcademy")
+
+  rosters Roster[]
+}
+
+model Roster {
+  id         Int       @id @default(autoincrement())
+  playerId   Int
+  teamId     Int
+  role       String?   // duelist, controller, initiator, sentinel, igl
+  isStandin  Boolean   @default(false)
+  mapsPlayed Int       @default(0)
+  yearStart  DateTime
+  yearEnd    DateTime?
+  sourceUrl  String?
+
+  player Player @relation(fields: [playerId], references: [id])
+  team   Team   @relation(fields: [teamId], references: [id])
+
+  @@index([playerId])
+  @@index([teamId])
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String?   @unique
+  nickname       String?   @unique
+  avatarUrl      String?
+  elo            Int       @default(1000)
+  provider       String?
+  providerId     String?
+  lastNickChange DateTime?
+  createdAt      DateTime  @default(now())
+
+  matchesAsP1 Match[] @relation("Player1")
+  matchesAsP2 Match[] @relation("Player2")
+  matchesWon  Match[] @relation("Winner")
+}
+
+model Match {
+  id          String   @id @default(uuid())
+  mode        String   // "bot" | "pvp_private" | "pvp_ranked" | "daily"
+  player1Id   String
+  player2Id   String?
+  winnerId    String?
+  chainLength Int      @default(0)
+  chainNodes  String   @default("[]") // JSON array of player IDs
+  durationSecs Int     @default(0)
+  createdAt   DateTime @default(now())
+
+  player1 User  @relation("Player1", fields: [player1Id], references: [id])
+  player2 User? @relation("Player2", fields: [player2Id], references: [id])
+  winner  User? @relation("Winner", fields: [winnerId], references: [id])
+}
