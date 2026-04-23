@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VALIX_OS - Success</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#484742",
+                        "on-error-container": "#ffdad6",
+                        "surface": "#0a141e",
+                        "tertiary-fixed-dim": "#02e600",
+                        "on-surface": "#d9e3f2",
+                        "primary-fixed": "#ffdad9",
+                        "tertiary-container": "#03a800",
+                        "on-surface-variant": "#e4bdbc",
+                        "on-tertiary-fixed": "#002200",
+                        "on-secondary": "#31302c",
+                        "surface-tint": "#ffb3b2",
+                        "outline-variant": "#5b403f",
+                        "on-tertiary": "#013a00",
+                        "surface-container-highest": "#2c3641",
+                        "inverse-surface": "#d9e3f2",
+                        "on-tertiary-container": "#013200",
+                        "on-background": "#d9e3f2",
+                        "on-secondary-fixed-variant": "#484742",
+                        "on-error": "#690005",
+                        "primary": "#ffb3b2",
+                        "primary-fixed-dim": "#ffb3b2",
+                        "surface-container-high": "#212b35",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "on-primary-fixed-variant": "#92001f",
+                        "surface-variant": "#2c3641",
+                        "on-secondary-container": "#b8b5ae",
+                        "secondary-fixed": "#e6e2db",
+                        "on-primary-container": "#5b000f",
+                        "surface-bright": "#303a45",
+                        "background": "#0a141e",
+                        "on-primary-fixed": "#410008",
+                        "secondary": "#cac6bf",
+                        "primary-container": "#ff525d",
+                        "outline": "#ab8887",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed": "#77ff61",
+                        "surface-dim": "#0a141e",
+                        "on-tertiary-fixed-variant": "#015300",
+                        "inverse-on-surface": "#27313c",
+                        "tertiary": "#02e600",
+                        "inverse-primary": "#bd0c2d",
+                        "surface-container-low": "#121c27",
+                        "on-primary": "#680013",
+                        "error-container": "#93000a",
+                        "surface-container": "#17202b",
+                        "surface-container-lowest": "#050f19",
+                        "on-secondary-fixed": "#1c1c18"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-bold": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "headline-lg": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "display-xl": ["72px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700"}],
+                        "headline-md": ["32px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "label-bold": ["14px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "code-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .clip-diagonal { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%); }
+        .clip-diagonal-reverse { clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px); }
+        .scanline { background: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(236, 232, 225, 0.05) 2px, rgba(236, 232, 225, 0.05) 4px); }
+        .success-border { border: 2px solid #00FF00; }
+        .success-text { color: #00FF00; }
+        .success-glow { text-shadow: 0 0 10px rgba(0, 255, 0, 0.5); }
+        .particle { width: 4px; height: 4px; background-color: #00FF00; position: absolute; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased min-h-screen flex flex-col pt-20 pb-20 md:pb-0">
+<!-- TopAppBar -->
+<nav class="fixed top-0 left-0 w-full z-[100] flex justify-between items-center px-6 py-4 max-w-full bg-[#0F1923] dark:bg-[#0F1923] docked full-width top-0 border-b-2 border-[#ECE8E1]/10 border-b-2 border-[#FF4655]/30 flat no-shadows bg-opacity-95 backdrop-blur-md hidden md:flex">
+<div class="flex items-center gap-8">
+<div class="text-2xl font-black italic tracking-tighter text-[#FF4655]">VALIX_OS</div>
+<div class="flex items-center gap-4">
+<a class="text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75" href="#">INTEL</a>
+<a class="text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75" href="#">ARCHIVES</a>
+<a class="text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75" href="#">STATIONS</a>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-[#FF4655] cursor-pointer hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75">notifications_paused</span>
+<span class="material-symbols-outlined text-[#FF4655] cursor-pointer hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75">settings_input_component</span>
+</div>
+<button class="font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs bg-[#FF4655] text-[#ECE8E1] px-4 py-2 hover:bg-[#FF4655]/80 transition-colors clip-diagonal">DECODE_SESSION</button>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-grow p-gutter md:p-margin max-w-container-max mx-auto w-full flex flex-col gap-8 items-center justify-center">
+<!-- Success Banner -->
+<div class="w-full max-w-3xl bg-surface-container-high success-border p-6 relative clip-diagonal flex flex-col items-center justify-center scanline text-center">
+<div class="particle top-2 left-2"></div>
+<div class="particle top-2 right-2"></div>
+<div class="particle bottom-2 left-2"></div>
+<div class="particle bottom-2 right-2"></div>
+<span class="material-symbols-outlined text-6xl success-text mb-4" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<h1 class="font-headline-lg text-headline-lg success-text success-glow uppercase">CONNECTION ESTABLISHED</h1>
+<p class="font-code-sm text-code-sm text-secondary mt-2">SYS.OP.SUCCESS // AUTHENTICATION VERIFIED</p>
+</div>
+<!-- Terminal Search -->
+<div class="w-full max-w-3xl bg-surface-container-highest border border-outline/30 p-4 flex items-center gap-4">
+<span class="font-code-sm text-code-sm text-tertiary">USER_SEARCH:/</span>
+<input class="bg-transparent border-none outline-none font-code-sm text-code-sm text-on-surface flex-grow focus:ring-0" readonly="" type="text" value="ENCRYPTED_DATA_PACKET_0x9A"/>
+<span class="w-2 h-4 bg-tertiary animate-pulse"></span>
+</div>
+<!-- Player Cards Row -->
+<div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-surface-container border border-outline/10 flex flex-col clip-diagonal relative group">
+<div class="h-48 overflow-hidden relative">
+<img alt="Tactical Operator Portrait" class="w-full h-full object-cover grayscale mix-blend-luminosity opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Portrait of a futuristic tactical operator in dark armor with neon green accents, dramatic lighting, high contrast" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU0_kNqA2SfTX4WlyV0rSKh6SkVEESyBNlnqB-rpJoorVsfqKJ1KeLhqGbgQz9b53P1bBB5PfaGnKB81UAEfnrfkrLfO_6vFxPhYdU_ko16wgkkTpTZpvYKUmiPSDJKKOHxminlDja_i_NpOfZMvopl6zCCW1tscFGJZCdAgX5nwHIkBEz4Z4qta7zhSsAJaivjF23iITNqz6LX4ieCZwZxlrWlxTFCEOt-oGGzVSw4n6d0sBLNrhS-FJKV-WpIG8zk1OvR5L0uRI"/>
+<div class="absolute inset-0 bg-tertiary/20 mix-blend-overlay"></div>
+</div>
+<div class="p-4 border-t border-outline/10 flex justify-between items-center bg-surface-container-low relative">
+<div class="scanline absolute inset-0 z-0"></div>
+<div class="relative z-10">
+<h3 class="font-label-bold text-label-bold text-on-surface uppercase">OPERATIVE_01</h3>
+<p class="font-code-sm text-code-sm text-secondary">CLASS: VANGUARD</p>
+</div>
+<div class="w-3 h-3 rounded-full bg-tertiary success-glow relative z-10"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container border border-outline/10 flex flex-col clip-diagonal relative group">
+<div class="h-48 overflow-hidden relative">
+<img alt="Tactical Operator Portrait" class="w-full h-full object-cover grayscale mix-blend-luminosity opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Portrait of a cybernetic scout character with glowing visor, moody cinematic lighting, cyberpunk aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBwO9I-9kn3BQ-qkG5Bt-d6xzXirkbnVQV5MrN7WP6p4spFCefM1SeyPGZiiczWgXRpmp6mFhwdPC55TKzq6lWFhe9pQSCUTh-jYmMOiY1AmriiU1djmdo4uIGMaUpX-w3MMDKnhaBu60gKRsMof249q5XE8CKpa7b7HRhHktOnpYMmeEuTb8GBXSplT_sdXqtPTRshSI32cg2-S5uufHGMt6lyFanM15OeyGfr8j9iFC5tq1uWGra5zdsQ8Nzti70ACfmJatrSJLY"/>
+<div class="absolute inset-0 bg-tertiary/20 mix-blend-overlay"></div>
+</div>
+<div class="p-4 border-t border-outline/10 flex justify-between items-center bg-surface-container-low relative">
+<div class="scanline absolute inset-0 z-0"></div>
+<div class="relative z-10">
+<h3 class="font-label-bold text-label-bold text-on-surface uppercase">OPERATIVE_02</h3>
+<p class="font-code-sm text-code-sm text-secondary">CLASS: RECON</p>
+</div>
+<div class="w-3 h-3 rounded-full bg-tertiary success-glow relative z-10"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container border border-outline/10 flex flex-col clip-diagonal relative group">
+<div class="h-48 overflow-hidden relative">
+<img alt="Tactical Operator Portrait" class="w-full h-full object-cover grayscale mix-blend-luminosity opacity-80 group-hover:opacity-100 transition-opacity" data-alt="Portrait of a heavy weapons specialist in exo-suit, dark gritty environment, green rim lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9iVpBJwcZ3PMQUhHPdLy6b-pTIfl1IT6q3FDt5PLrAQeUsp7rtWpsC3N7zeanmDI8Q2kYWffD-lkoup34nFOgQfKzsEEOuwkPoFj_zyi9-xwm63rPbMac2r528R2fQKzQniKpy_hRC91Ek7P17rjNYc6Kb_yoAUcgA26AGAAhJ8KoBBX79yp77vRwisydySnmrCXHuxOfBiLCK81M-aM6chtQqv51n_R0fDa1Le8HbbUnjAxcOpALnB3EOuGM_Zc4WTWnadPgI-s"/>
+<div class="absolute inset-0 bg-tertiary/20 mix-blend-overlay"></div>
+</div>
+<div class="p-4 border-t border-outline/10 flex justify-between items-center bg-surface-container-low relative">
+<div class="scanline absolute inset-0 z-0"></div>
+<div class="relative z-10">
+<h3 class="font-label-bold text-label-bold text-on-surface uppercase">OPERATIVE_03</h3>
+<p class="font-code-sm text-code-sm text-secondary">CLASS: SUPPORT</p>
+</div>
+<div class="w-3 h-3 rounded-full bg-tertiary success-glow relative z-10"></div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex gap-4 mt-8">
+<button class="font-label-bold text-label-bold text-surface bg-tertiary px-8 py-3 clip-diagonal hover:bg-tertiary-fixed-dim transition-colors uppercase">PROCEED TO HUB</button>
+<button class="font-label-bold text-label-bold text-on-surface border border-outline/50 px-8 py-3 clip-diagonal hover:bg-surface-container transition-colors uppercase">VIEW LOGS</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe bg-[#0F1923] dark:bg-[#0F1923] docked full-width bottom-0 border-t-2 border-[#ECE8E1]/10 border-t border-[#ECE8E1]/20 flat elevation-0 md:hidden">
+<a class="flex flex-col items-center justify-center bg-[#FF4655] text-[#ECE8E1] p-2 clip-path-polygon-[10%_0,100%_0,90%_100%,0_100%]" href="#">
+<span class="material-symbols-outlined text-xl">grid_view</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase mt-1">DASHBOARD</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">manage_search</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase mt-1">HISTORY</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">bolt</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase mt-1">CONNECT</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">groups</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase mt-1">SOCIAL</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl">fingerprint</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase mt-1">IDENTITY</span>
+</a>
+</nav>
+</body></html>

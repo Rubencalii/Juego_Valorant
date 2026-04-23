@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Valix OS - Main Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#484742",
+                        "on-error-container": "#ffdad6",
+                        "surface": "#0a141e",
+                        "tertiary-fixed-dim": "#02e600",
+                        "on-surface": "#d9e3f2",
+                        "primary-fixed": "#ffdad9",
+                        "tertiary-container": "#03a800",
+                        "on-surface-variant": "#e4bdbc",
+                        "on-tertiary-fixed": "#002200",
+                        "on-secondary": "#31302c",
+                        "surface-tint": "#ffb3b2",
+                        "outline-variant": "#5b403f",
+                        "on-tertiary": "#013a00",
+                        "surface-container-highest": "#2c3641",
+                        "inverse-surface": "#d9e3f2",
+                        "on-tertiary-container": "#013200",
+                        "on-background": "#d9e3f2",
+                        "on-secondary-fixed-variant": "#484742",
+                        "on-error": "#690005",
+                        "primary": "#ffb3b2",
+                        "primary-fixed-dim": "#ffb3b2",
+                        "surface-container-high": "#212b35",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "on-primary-fixed-variant": "#92001f",
+                        "surface-variant": "#2c3641",
+                        "on-secondary-container": "#b8b5ae",
+                        "secondary-fixed": "#e6e2db",
+                        "on-primary-container": "#5b000f",
+                        "surface-bright": "#303a45",
+                        "background": "#0a141e",
+                        "on-primary-fixed": "#410008",
+                        "secondary": "#cac6bf",
+                        "primary-container": "#ff525d",
+                        "outline": "#ab8887",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed": "#77ff61",
+                        "surface-dim": "#0a141e",
+                        "on-tertiary-fixed-variant": "#015300",
+                        "inverse-on-surface": "#27313c",
+                        "tertiary": "#02e600",
+                        "inverse-primary": "#bd0c2d",
+                        "surface-container-low": "#121c27",
+                        "on-primary": "#680013",
+                        "error-container": "#93000a",
+                        "surface-container": "#17202b",
+                        "surface-container-lowest": "#050f19",
+                        "on-secondary-fixed": "#1c1c18",
+                        "valorant-red": "#FF4655",
+                        "off-white": "#ECE8E1"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-bold": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "headline-lg": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-bold": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "code-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .scanline {
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%,
+                rgba(0,0,0,0.2)
+            );
+            background-size: 100% 4px;
+        }
+        .diagonal-bg {
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(236, 232, 225, 0.03) 10px,
+                rgba(236, 232, 225, 0.03) 11px
+            );
+        }
+        .clip-card {
+            clip-path: polygon(10% 0, 100% 0, 100% 90%, 90% 100%, 0 100%, 0 10%);
+        }
+        .clip-input {
+            clip-path: polygon(0 0, 95% 0, 100% 50%, 95% 100%, 0 100%);
+        }
+        .glitch-text:hover {
+            transform: translateX(2px);
+            text-shadow: 2px 0 #FF4655, -2px 0 #02e600;
+        }
+    </style>
+</head>
+<body class="bg-[#0F1923] text-on-background min-h-screen relative overflow-x-hidden flex flex-col font-body-md scanline diagonal-bg">
+<!-- Top Navigation -->
+<nav class="fixed top-0 left-0 w-full z-[100] flex justify-between items-center px-6 py-4 max-w-full docked full-width border-b-2 border-[#ECE8E1]/10 flat no-shadows bg-opacity-95 backdrop-blur-md bg-[#0F1923]">
+<div class="text-2xl font-black italic tracking-tighter text-[#FF4655]">VALIX_OS</div>
+<div class="hidden md:flex gap-4">
+<a class="text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75" href="#">INTEL</a>
+<a class="text-[#FF4655] border-b-2 border-[#FF4655] pb-1 px-2 font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75" href="#">ARCHIVES</a>
+<a class="text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75" href="#">STATIONS</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs text-[#FF4655] border border-[#FF4655] px-4 py-1 hover:bg-[#FF4655]/10 transition-colors">DECODE_SESSION</button>
+<div class="flex gap-2 text-[#ECE8E1]/50">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications_paused</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings_input_component</span>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col items-center justify-start pt-32 pb-32 px-gutter max-w-container-max mx-auto w-full relative z-10">
+<!-- Header / Timer -->
+<header class="w-full flex justify-center mb-16 relative">
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="absolute inset-0 w-full h-full text-surface-container" viewbox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="70 20" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center font-display-xl text-valorant-red text-4xl" style="text-shadow: 0 0 10px rgba(255, 70, 85, 0.5);">
+                    00
+                </div>
+</div>
+</header>
+<!-- Center Stage: Player Cards -->
+<section class="w-full grid grid-cols-1 md:grid-cols-2 gap-12 relative mb-16">
+<!-- Glowing Line Connector -->
+<div class="hidden md:block absolute top-1/2 left-1/4 right-1/4 h-[2px] bg-valorant-red shadow-[0_0_10px_#FF4655] z-0 transform -translate-y-1/2 opacity-50"></div>
+<!-- Player 1 Card -->
+<div class="relative z-10 bg-surface-container border border-off-white/10 p-2 clip-card group">
+<div class="absolute top-0 right-0 w-8 h-8 bg-valorant-red clip-card z-20"></div>
+<div class="relative h-64 bg-surface-dim overflow-hidden clip-card mb-4">
+<div class="absolute inset-0 bg-cover bg-center grayscale mix-blend-luminosity opacity-80" data-alt="close-up of a tactical esports player wearing headset, dramatic red lighting, determined expression" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCviq4Jq_aGpdWG8fWsIyi7_TsqUXhFr_Uq1wDIVnipTuClJv78mM_OwoKXjPHBMXUjQZtv2N7sG04FAmvmnQvD1tkDC2JUllbYlmrWW-XP2bOTrx6W-NPdQ2gacEXrYe5DANa7Vwxx6YlgjvH46WoffPooFbRlDk2i5UZChnyD2PAz74VG93mQINikQhsy9JOQUCmOFvCo9oYTLIzfOUug4pp3lSDjo_5AVLE8NTkAXutBzk0O6FDqfNPqYAn_RjOGQygA_CC0ueo');"></div>
+<div class="absolute bottom-4 left-4 flex items-center gap-2">
+<img alt="USA Flag" class="w-6 h-auto border border-off-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKMmunaKMqomTCJ-PfhsEREyUEOP-cOfV3eiFtDwtIc0j5bcgqeC6kZXIP8Ob8YaPYmDk7QcsoDOz0zSRT8TTOkVUdBp6uTH8qNrwexJj7YDG5RBZQgx8OOQ5T3mGFjON769GhKols22F_mgzNvwxMxZhK9doxmyGJtj54pHAuVeaoiw2rEdUW9PuvGeBykDEV9gKF47lfDbbaY4dHyq9ItjXS9tR_k5OgDQXEyLKWfyukWNQ4RUjJwywKhWOOdXd8LuGJdtb0FGU"/>
+<span class="font-label-bold text-label-bold text-off-white bg-black/50 px-2 py-1 uppercase">Sentinel</span>
+</div>
+</div>
+<div class="px-4 pb-4">
+<h3 class="font-headline-md text-headline-md text-off-white mb-2 uppercase">Jett_Main</h3>
+<div class="flex justify-between items-center text-secondary border-t border-off-white/10 pt-2">
+<span class="font-code-sm text-code-sm">K/D: 1.45</span>
+<span class="font-code-sm text-code-sm text-tertiary-fixed-dim">ONLINE</span>
+</div>
+</div>
+</div>
+<!-- Player 2 Card -->
+<div class="relative z-10 bg-surface-container border border-off-white/10 p-2 clip-card group">
+<div class="absolute top-0 left-0 w-8 h-8 bg-surface-container-highest clip-card z-20"></div>
+<div class="relative h-64 bg-surface-dim overflow-hidden clip-card mb-4">
+<div class="absolute inset-0 bg-cover bg-center grayscale mix-blend-luminosity opacity-60" data-alt="tactical esports player side profile, dark dramatic lighting with cool blue accents" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCNfDXqpDk61vPBcYH2nDvKYOQJ89puys64Dt-cQMAh_MULX0wWu0zvrjd9Wdk-1UDWMpxLZSkup4CUAOEvHZzcuW7INZ-jSU0tDQOmzvQ_ZRFjQN-41V69qGmejBmPRzxSjrx2gNeEF8GLDnerxVaiC6KrOjDB8KtDrlyIL1VCmXzZOTcIuERD9LWgXump_4Pfrv0sY8VwuFlb5cqoNiT61YQX7zjaaMQwUulrndr7mrN6vB3uMIh5mEbJpICkqaeISBO1Q1Szn9w');"></div>
+<div class="absolute bottom-4 right-4 flex items-center gap-2">
+<span class="font-label-bold text-label-bold text-off-white bg-black/50 px-2 py-1 uppercase">Duelist</span>
+<img alt="KR Flag" class="w-6 h-auto border border-off-white/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2B9oVfaB_Q4NBIr0IYkOhAnqIhcHG80h4UU2WY7ov8yCdAAY7b2qLqOLsesCy774E6P2O-8nKeow9b1Ai9nL4ZXGyZxuUMzo4gjJ4HHSGGcsi7tZ0BWPVLBTkZx1ZdUEMDu1u6tmkkV3w0zTzcCjCDg7J5kN09mHtYeCgBVHR4YhIjKbljZbTdYtl8lTpWasUt1RoYPTpaXv5yPOz68BN8jAkQPrjPAw6WyVFqnT070L3vzuVxFERWZd-Sm5S71FYBRAm5jIZRXs"/>
+</div>
+</div>
+<div class="px-4 pb-4 text-right">
+<h3 class="font-headline-md text-headline-md text-off-white mb-2 uppercase">Seoul_Viper</h3>
+<div class="flex justify-between items-center text-secondary border-t border-off-white/10 pt-2 flex-row-reverse">
+<span class="font-code-sm text-code-sm">K/D: 1.62</span>
+<span class="font-code-sm text-code-sm text-tertiary-fixed-dim">ONLINE</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Input Area -->
+<section class="w-full max-w-2xl mx-auto mb-16 relative">
+<div class="bg-surface-container-highest border border-off-white/20 p-[2px] clip-input">
+<div class="bg-surface flex items-center px-4 py-3 clip-input">
+<span class="font-code-sm text-code-sm text-valorant-red mr-2">USER_SEARCH:/</span>
+<input class="bg-transparent border-none focus:ring-0 text-off-white font-code-sm text-code-sm w-full placeholder-secondary/50" placeholder="Enter target ID..." type="text"/>
+<span class="w-2 h-4 bg-valorant-red animate-pulse"></span>
+</div>
+</div>
+</section>
+<!-- History Section -->
+<section class="w-full max-w-4xl mx-auto border-t border-off-white/10 pt-8">
+<h4 class="font-label-bold text-label-bold text-secondary mb-6 tracking-widest uppercase">Connection History</h4>
+<div class="space-y-2 max-h-64 overflow-y-auto pr-2" style="scrollbar-width: thin; scrollbar-color: #5b403f #0a141e;">
+<div class="bg-surface-container hover:bg-surface-container-high border-l-2 border-surface-container-high hover:border-valorant-red transition-colors p-3 flex justify-between items-center group">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary group-hover:text-valorant-red" style="font-variation-settings: 'FILL' 0;">history</span>
+<span class="font-code-sm text-code-sm text-off-white uppercase">Match_ID_74892</span>
+</div>
+<span class="font-code-sm text-code-sm text-secondary">12m ago</span>
+</div>
+<div class="bg-surface-container hover:bg-surface-container-high border-l-2 border-surface-container-high hover:border-valorant-red transition-colors p-3 flex justify-between items-center group">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary group-hover:text-valorant-red" style="font-variation-settings: 'FILL' 0;">history</span>
+<span class="font-code-sm text-code-sm text-off-white uppercase">Match_ID_74891</span>
+</div>
+<span class="font-code-sm text-code-sm text-secondary">2h ago</span>
+</div>
+<div class="bg-surface-container hover:bg-surface-container-high border-l-2 border-surface-container-high hover:border-valorant-red transition-colors p-3 flex justify-between items-center group">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary group-hover:text-valorant-red" style="font-variation-settings: 'FILL' 0;">history</span>
+<span class="font-code-sm text-code-sm text-off-white uppercase">Match_ID_74890</span>
+</div>
+<span class="font-code-sm text-code-sm text-secondary">Yesterday</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 pb-safe bg-[#0F1923] docked full-width border-t-2 border-[#ECE8E1]/10 flat elevation-0">
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">grid_view</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase">DASHBOARD</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#FF4655] text-[#ECE8E1] p-2 clip-path-polygon-[10%_0,100%_0,90%_100%,0_100%] hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">manage_search</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase text-off-white">ARCHIVES</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">bolt</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase">CONNECT</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">groups</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase">SOCIAL</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#ECE8E1]/40 p-2 hover:text-[#FF4655] hover:bg-[#ECE8E1]/5 transition-colors" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">fingerprint</span>
+<span class="font-['Space_Grotesk'] font-bold text-[10px] tracking-widest uppercase">IDENTITY</span>
+</a>
+</nav>
+</body></html>

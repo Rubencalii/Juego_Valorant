@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VALIX_OS - SYSTEM ERROR</title>
+<!-- Google Fonts: Inter & Space Grotesk -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<!-- Tailwind CSS Setup -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#484742",
+                        "on-error-container": "#ffdad6",
+                        "surface": "#0a141e",
+                        "tertiary-fixed-dim": "#02e600",
+                        "on-surface": "#d9e3f2",
+                        "primary-fixed": "#ffdad9",
+                        "tertiary-container": "#03a800",
+                        "on-surface-variant": "#e4bdbc",
+                        "on-tertiary-fixed": "#002200",
+                        "on-secondary": "#31302c",
+                        "surface-tint": "#ffb3b2",
+                        "outline-variant": "#5b403f",
+                        "on-tertiary": "#013a00",
+                        "surface-container-highest": "#2c3641",
+                        "inverse-surface": "#d9e3f2",
+                        "on-tertiary-container": "#013200",
+                        "on-background": "#d9e3f2",
+                        "on-secondary-fixed-variant": "#484742",
+                        "on-error": "#690005",
+                        "primary": "#ffb3b2",
+                        "primary-fixed-dim": "#ffb3b2",
+                        "surface-container-high": "#212b35",
+                        "secondary-fixed-dim": "#cac6bf",
+                        "on-primary-fixed-variant": "#92001f",
+                        "surface-variant": "#2c3641",
+                        "on-secondary-container": "#b8b5ae",
+                        "secondary-fixed": "#e6e2db",
+                        "on-primary-container": "#5b000f",
+                        "surface-bright": "#303a45",
+                        "background": "#0a141e",
+                        "on-primary-fixed": "#410008",
+                        "secondary": "#cac6bf",
+                        "primary-container": "#ff525d",
+                        "outline": "#ab8887",
+                        "error": "#ffb4ab",
+                        "tertiary-fixed": "#77ff61",
+                        "surface-dim": "#0a141e",
+                        "on-tertiary-fixed-variant": "#015300",
+                        "inverse-on-surface": "#27313c",
+                        "tertiary": "#02e600",
+                        "inverse-primary": "#bd0c2d",
+                        "surface-container-low": "#121c27",
+                        "on-primary": "#680013",
+                        "error-container": "#93000a",
+                        "surface-container": "#17202b",
+                        "surface-container-lowest": "#050f19",
+                        "on-secondary-fixed": "#1c1c18"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin": "32px",
+                        "unit": "4px",
+                        "gutter": "16px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "display-xl": ["Space Grotesk"],
+                        "headline-md": ["Space Grotesk"],
+                        "label-bold": ["Space Grotesk"],
+                        "body-md": ["Inter"],
+                        "code-sm": ["Inter"],
+                        "headline-lg": ["Space Grotesk"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["72px", { "lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "700" }],
+                        "headline-md": ["32px", { "lineHeight": "1.2", "fontWeight": "600" }],
+                        "label-bold": ["14px", { "lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "code-sm": ["12px", { "lineHeight": "1.0", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg": ["48px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col relative overflow-hidden">
+<!-- Screen Scanline Overlay (Static) -->
+<div class="pointer-events-none fixed inset-0 z-50 opacity-20" style="background-image: linear-gradient(rgba(255, 82, 93, 0.1) 50%, transparent 50%); background-size: 100% 4px;"></div>
+<!-- Radial Error Gradient (Static Pulse Impression) -->
+<div class="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-error-container/60 via-background to-background"></div>
+<!-- SHARED COMPONENT: TopAppBar (Rendered with JSON styles, representing broken main layout) -->
+<header class="bg-[#0F1923] dark:bg-[#0F1923] docked full-width top-0 border-b-2 border-[#ECE8E1]/10 flat no-shadows bg-opacity-95 backdrop-blur-md fixed left-0 w-full z-[100] flex justify-between items-center px-6 py-4 max-w-full border-b-2 border-[#FF4655]/30">
+<!-- Brand Logo -->
+<div class="flex items-center gap-2 relative">
+<!-- Simulated Glitch Overlays on Logo -->
+<div class="absolute -left-1 top-0 text-2xl font-black italic tracking-tighter text-[#FF4655] opacity-50 mix-blend-screen" style="clip-path: inset(10% 0 50% 0);">VALIX_OS</div>
+<div class="absolute left-1 top-0 text-2xl font-black italic tracking-tighter text-cyan-400 opacity-50 mix-blend-screen" style="clip-path: inset(50% 0 10% 0);">VALIX_OS</div>
+<h1 class="text-2xl font-black italic tracking-tighter text-[#FF4655] relative z-10">VALIX_OS</h1>
+</div>
+<!-- Navigation Links (Inactive/Corrupted State) -->
+<nav class="hidden md:flex gap-6 items-center">
+<a class="font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75 relative" href="#">
+                INTEL
+                <div class="absolute inset-0 bg-error/20 opacity-0 hover:opacity-100 mix-blend-color-burn"></div>
+</a>
+<a class="font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75 line-through decoration-error/50" href="#">
+                ARCHIVES
+            </a>
+<a class="font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs text-[#ECE8E1]/50 hover:text-[#ECE8E1] px-2 hover:bg-[#FF4655]/10 hover:text-[#FF4655] transition-all duration-75" href="#">
+                STATIONS
+            </a>
+</nav>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden md:block font-['Space_Grotesk'] tracking-[0.2em] uppercase font-bold text-xs bg-error-container text-on-error-container px-4 py-2 border border-error/50" style="clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);">
+                DECODE_SESSION <span class="text-error ml-2 text-[10px]">[FAIL]</span>
+</button>
+<div class="flex gap-2 text-[#FF4655]">
+<span class="material-symbols-outlined opacity-50" data-weight="fill">notifications_paused</span>
+<span class="material-symbols-outlined opacity-50" data-weight="fill">settings_input_component</span>
+</div>
+</div>
+</header>
+<!-- Main Canvas: ERROR STATE -->
+<main class="flex-grow flex items-center justify-center relative z-10 px-gutter mt-20">
+<!-- Background Decorators / Structural Glitches -->
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<!-- Diagonal cut lines representing broken container -->
+<div class="absolute top-[20%] left-[-10%] w-[120%] h-px bg-error/30 transform -rotate-[5deg]"></div>
+<div class="absolute top-[70%] left-[-10%] w-[120%] h-[2px] bg-error-container transform rotate-[15deg] opacity-40"></div>
+<!-- Static Data corruption blocks -->
+<div class="absolute top-[30%] left-[10%] font-code-sm text-code-sm text-error/40 w-48 break-all leading-none mix-blend-screen">
+                ERR:0x00F9A4<br/>NULL_PTR_EXC<br/>01001000 01100101 01101100 01110000<br/>SYS_HALT
+            </div>
+<div class="absolute bottom-[20%] right-[15%] font-code-sm text-code-sm text-error/30 w-32 break-all text-right mix-blend-screen opacity-50">
+                //CONNECTION<br/>//TIMEOUT<br/>ATTEMPT 4/5
+            </div>
+</div>
+<!-- Central Error Module -->
+<div class="relative w-full max-w-4xl bg-surface-container-low border-2 border-error border-opacity-50 p-8 md:p-12" style="clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));">
+<!-- Inner Structural Frame -->
+<div class="absolute inset-2 border border-error-container/30 pointer-events-none" style="clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 24px 100%, 0 calc(100% - 24px));"></div>
+<div class="flex flex-col items-center justify-center text-center relative z-20">
+<!-- Warning Icon -->
+<div class="mb-6 relative">
+<div class="absolute inset-0 bg-error blur-xl opacity-20"></div>
+<span class="material-symbols-outlined text-[80px] text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<!-- Massive Glitch Text Header -->
+<div class="relative mb-4">
+<!-- Chromatic Aberration Shadows (Static) -->
+<div class="absolute top-0 left-[-3px] font-display-xl text-display-xl text-cyan-400 opacity-60 mix-blend-screen pointer-events-none" style="clip-path: inset(10% 0 60% 0);">CONNECTION LOST</div>
+<div class="absolute top-0 left-[3px] font-display-xl text-display-xl text-primary-container opacity-60 mix-blend-screen pointer-events-none" style="clip-path: inset(50% 0 10% 0);">CONNECTION LOST</div>
+<!-- Main Text -->
+<h2 class="font-display-xl text-display-xl text-error uppercase tracking-tighter m-0 leading-none relative z-10">CONNECTION LOST</h2>
+</div>
+<!-- Sub-status Terminal View -->
+<div class="bg-surface-container-highest border border-outline-variant p-4 w-full max-w-lg mt-8 text-left relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-error"></div>
+<p class="font-label-bold text-label-bold text-error uppercase mb-2 flex items-center gap-2">
+<span class="w-2 h-2 bg-error inline-block"></span> CRITICAL FAILURE
+                    </p>
+<div class="font-code-sm text-code-sm text-on-surface-variant space-y-1">
+<p>&gt; UPLINK_STATUS: <span class="text-error">SEVERED</span></p>
+<p>&gt; PACKET_LOSS: <span class="text-error">99.8%</span></p>
+<p>&gt; RE-ESTABLISHING_CONNECTION... <span class="inline-block w-2 h-3 bg-on-surface-variant opacity-70"></span></p>
+</div>
+</div>
+<!-- Tactical Action Buttons -->
+<div class="mt-10 flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
+<!-- Primary Retry Button -->
+<button class="relative bg-error text-on-error font-label-bold text-label-bold uppercase py-4 px-8 border border-transparent hover:bg-error-container transition-colors focus:outline-none" style="clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);">
+<span class="flex items-center gap-2 justify-center">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+                            RETRY CONNECTION
+                        </span>
+<!-- Corner Accent -->
+<span class="absolute top-0 left-0 w-2 h-2 bg-surface"></span>
+</button>
+<!-- Secondary Return Button -->
+<button class="relative bg-transparent text-error font-label-bold text-label-bold uppercase py-4 px-8 border border-error hover:bg-error/10 transition-colors focus:outline-none" style="clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));">
+                        RETURN TO HUB
+                    </button>
+</div>
+</div>
+<!-- Brutalist Decorative Particles (Error State Rules: static clustered blocks) -->
+<div class="absolute top-0 right-0 w-8 h-8 flex flex-wrap gap-[1px] p-1 pointer-events-none">
+<div class="w-1 h-1 bg-error"></div>
+<div class="w-1 h-1 bg-error opacity-50"></div>
+<div class="w-1 h-1 bg-transparent"></div>
+<div class="w-1 h-1 bg-error"></div>
+<div class="w-1 h-1 bg-transparent"></div>
+<div class="w-1 h-1 bg-error opacity-20"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-8 h-8 flex flex-wrap gap-[1px] p-1 pointer-events-none rotate-180">
+<div class="w-1 h-1 bg-error"></div>
+<div class="w-1 h-1 bg-transparent"></div>
+<div class="w-1 h-1 bg-error opacity-80"></div>
+<div class="w-1 h-1 bg-error"></div>
+</div>
+</div>
+</main>
+</body></html>
