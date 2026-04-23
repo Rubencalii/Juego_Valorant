@@ -54,13 +54,13 @@ model Roster {
 
 model User {
   id             String    @id @default(uuid())
-  email          String?   @unique
-  nickname       String?   @unique
+  nickname       String    @unique
+  passwordHash   String
   avatarUrl      String?
   elo            Int       @default(1000)
-  provider       String?
-  providerId     String?
-  lastNickChange DateTime?
+  gamesPlayed    Int       @default(0)
+  gamesWon       Int       @default(0)
+  bestChain      Int       @default(0)
   createdAt      DateTime  @default(now())
 
   matchesAsP1 Match[] @relation("Player1")

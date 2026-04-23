@@ -7,6 +7,7 @@ import PlayerCard from "@/components/PlayerCard";
 import SearchInput from "@/components/SearchInput";
 import ChainHistory from "@/components/ChainHistory";
 import FeedbackToast from "@/components/FeedbackToast";
+import AuthModal from "@/components/AuthModal";
 
 interface PlayerData {
   id: number;
@@ -34,6 +35,8 @@ const PENALTY_SECS = 5;
 const MAX_ERRORS = 3;
 
 export default function GamePage() {
+  const [user, setUser] = useState<any>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [status, setStatus] = useState<GameStatus>("idle");
   const [currentPlayer, setCurrentPlayer] = useState<PlayerData | null>(null);
   const [currentTeam, setCurrentTeam] = useState<string>("");
@@ -46,6 +49,14 @@ export default function GamePage() {
   const [isYourTurn, setIsYourTurn] = useState(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const feedbackTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // --- FETCH USER ---
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then(res => res.json())
+      .then(data => { if (data.user) setUser(data.user); })
+      .catch(console.error);
+  }, []);
 
   // --- TIMER ---
   useEffect(() => {
@@ -198,6 +209,12 @@ export default function GamePage() {
     feedbackTimeoutRef.current = setTimeout(() => setFeedback({ type: null, message: "" }), 3000);
   };
 
+  // --- LOGOUT ---
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setUser(null);
+  };
+
   // --- RENDER ---
   return (
     <div style={{
@@ -222,6 +239,32 @@ export default function GamePage() {
           </span>
           <span className="tag tag-red">BETA</span>
         </div>
+        
+        {status === "idle" && (
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {user ? (
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>{user.nickname}</div>
+                  <div style={{ fontSize: "0.65rem", color: "var(--accent-cyan)", fontFamily: "var(--font-mono)" }}>
+                    ELO: {user.elo}
+                  </div>
+                </div>
+                <button onClick={handleLogout} style={{
+                  background: "none", border: "none", color: "var(--text-muted)",
+                  cursor: "pointer", fontSize: "0.75rem", textDecoration: "underline"
+                }}>
+                  Salir
+                </button>
+              </div>
+            ) : (
+              <button className="btn-secondary" style={{ padding: "6px 14px", fontSize: "0.75rem" }} onClick={() => setIsAuthModalOpen(true)}>
+                👤 INICIAR SESIÓN
+              </button>
+            )}
+          </div>
+        )}
+
         {status === "playing" && (
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span className="tag tag-orange">
@@ -391,6 +434,13 @@ export default function GamePage() {
           </button>
         </motion.div>
       )}
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onSuccess={setUser} 
+      />
     </div>
   );
 }
