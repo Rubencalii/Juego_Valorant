@@ -22,7 +22,10 @@ io.on("connection", (socket) => {
   console.log("Agent connected:", socket.id);
 
   socket.on("join_queue", async ({ userId, nickname, elo }) => {
-    // Check if already in queue
+    // SECURITY: Tie the socket to a specific userId to prevent impersonation in subsequent events
+    socket.data.userId = userId;
+    socket.data.nickname = nickname;
+
     if (queue.find(u => u.userId === userId)) return;
 
     console.log(`User ${nickname} (${elo} ELO) joined matchmaking queue`);
@@ -82,6 +85,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("create_room", async ({ userId, nickname, eloBet }) => {
+    socket.data.userId = userId;
+    socket.data.nickname = nickname;
     const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
     rooms.set(roomId, {
       id: roomId,
@@ -127,6 +132,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("submit_move", ({ roomId, playerId, nickname, newPlayerId, newNickname, sharedTeam }) => {
+    // SECURITY: Verify the player making the move is the one who connected the socket
+    if (socket.data.userId !== playerId) {
+      console.warn(`SECURITY ALERT: Socket ${socket.id} tried to move as ${playerId}`);
+      return;
+    }
     const room = rooms.get(roomId);
     if (!room) return;
 
@@ -140,9 +150,38 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("win_match", async ({ roomId, userId, chainLength, durationSecs, chainNodes }) => {
+async function verifyChain(playerIds) {
+  if (!playerIds || playerIds.length < 2) return false;
+  for (let i = 0; i < playerIds.length - 1; i++) {
+    const p1 = playerIds[i];
+    const p2 = playerIds[i + 1];
+    const shared = await sql`
+      SELECT 1 FROM rosters r1
+      JOIN rosters r2 ON r1.team_id = r2.team_id
+      WHERE r1.player_id = ${p1} AND r2.player_id = ${p2}
+      LIMIT 1
+    `;
+    if (!shared.length) return false;
+  }
+  return true;
+}
+
+socket.on("win_match", async ({ roomId, userId, chainLength, durationSecs, chainNodes }) => {
+    // SECURITY: Verify the player winning is the one who connected the socket
+    if (socket.data.userId !== userId) {
+      console.warn(`SECURITY ALERT: Socket ${socket.id} tried to win as ${userId}`);
+      return;
+    }
+
     const room = rooms.get(roomId);
     if (!room || room.status === "finished") return;
+
+    // SECURITY: Verify the chain nodes
+    const isValid = await verifyChain(chainNodes);
+    if (!isValid) {
+      console.warn(`SECURITY ALERT: Invalid chain detected in match ${roomId}`);
+      return;
+    }
 
     room.status = "finished";
     const winnerId = userId;

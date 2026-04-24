@@ -381,7 +381,7 @@ function PlayPage() {
 
       {/* Game Active */}
       {gameState !== "loading" && (
-        <div className="w-full max-w-4xl mx-auto flex flex-col items-center relative z-10 pt-28 pb-32 px-4">
+        <div className="w-full max-w-7xl mx-auto flex flex-col items-center relative z-10 pt-28 pb-32 px-4">
           {/* Mode indicator */}
           <div className="text-[10px] font-display font-bold text-[#FF4655] uppercase tracking-[0.3em] mb-2 flex items-center gap-2">
             <span className="w-2 h-2 bg-[#FF4655] animate-pulse" />

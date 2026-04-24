@@ -12,26 +12,24 @@ load_dotenv()
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_NAME = os.getenv("DB_NAME", "spikelink")
 DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASS = os.getenv("DB_PASS", "postgres_password") # Using the exact .env value
+DB_PASS = os.getenv("DB_PASS", "postgres_password")
 DB_PORT = os.getenv("DB_PORT", "5432")
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
 
-# Top VLR Teams (ID: Name)
-TOP_TEAMS = {
-    "2": "Sentinels",
-    "104": "Fnatic",
-    "6961": "LOUD",
-    "624": "Paper Rex",
-    "8185": "DRX",
-    "2359": "Leviatán",
-    "2355": "KRÜ Esports",
-    "4210": "Natus Vincere",
-    "1001": "Team Heretics",
-    "17": "Gen.G Esports"
-}
+# List of top teams to scrape (VLR.gg team IDs)
+TOP_TEAMS = [
+    # Americas
+    2, 188, 120, 1034, 11058, 2359, 6961, 2355, 2406, 7386,
+    # EMEA
+    2593, 474, 1184, 2059, 8877, 12694, 397, 6392, 1001, 4210,
+    # Pacific
+    624, 14, 17, 8185, 5448, 878, 4050, 466, 278, 282,
+    # China
+    1120, 12010, 1119, 731, 13576, 11985, 11981
+]
 
 def get_db_connection():
     """Establish and return a connection to the PostgreSQL database."""
@@ -43,134 +41,120 @@ def get_db_connection():
         port=DB_PORT
     )
 
-def fetch_vlr_team(team_id):
-    """Fetch active players from a VLR team page."""
-    url = f"https://www.vlr.gg/team/{team_id}"
-    response = requests.get(url, headers=HEADERS)
-    response.raise_for_status()
-    
-    soup = BeautifulSoup(response.text, "html.parser")
-    players = []
-    
-    # Active roster players
-    roster_items = soup.select('.team-roster-item > a')
-    for item in roster_items:
-        href = item.get('href')
-        if not href:
-            continue
-            
-        alias_div = item.select_one('.team-roster-item-name-alias')
-        if not alias_div:
-            continue
-            
-        nickname = alias_div.text.strip()
-        player_url = f"https://www.vlr.gg{href}"
-        
-        players.append({
-            "nickname": nickname,
-            "player_url": player_url,
-            "role": "Player"
-        })
-        
-    return players
+def fix_schema(cur):
+    """Ensures vlr_id exists and removes conflicting unique constraints."""
+    try:
+        cur.execute("ALTER TABLE players ADD COLUMN IF NOT EXISTS vlr_id TEXT UNIQUE;")
+        cur.execute("ALTER TABLE players DROP CONSTRAINT IF EXISTS players_nickname_key;")
+        cur.execute("ALTER TABLE teams DROP CONSTRAINT IF EXISTS teams_name_key;")
+    except Exception as e:
+        print(f"Schema update notice: {e}")
 
-def fetch_vlr_player(player_url):
-    """Fetch detailed info (image, real name, country) from VLR player page."""
-    response = requests.get(player_url, headers=HEADERS)
-    if response.status_code != 200:
+def fetch_vlr_player_details(player_id):
+    """Fetch details and HISTORY from a player's VLR page."""
+    url = f"https://www.vlr.gg/player/{player_id}"
+    try:
+        response = requests.get(url, headers=HEADERS)
+        soup = BeautifulSoup(response.content, "html.parser")
+        
+        # Image
+        avatar_container = soup.find("div", class_="wf-avatar")
+        img_tag = avatar_container.find("img") if avatar_container else None
+        image_url = None
+        if img_tag and 'src' in img_tag.attrs:
+            src = img_tag['src']
+            image_url = f"https:{src}" if src.startswith("//") else (f"https://www.vlr.gg{src}" if src.startswith("/") else src)
+            if "ph/sil.png" in image_url: image_url = None
+        
+        # Country
+        country_tag = soup.find("i", class_="flag")
+        country_code = None
+        if country_tag:
+            for cls in country_tag.get('class', []):
+                if cls.startswith('mod-'):
+                    country_code = cls.replace('mod-', '').upper()
+                    break
+
+        # History
+        history = []
+        team_links = soup.find_all("a", class_="wf-module-item")
+        for link in team_links:
+            href = link.get('href', '')
+            if '/team/' in href:
+                t_id = href.split('/')[2]
+                try:
+                    # Some historical teams are just text, others are blocks
+                    name_div = link.find("div", style=lambda v: True)
+                    name_text = link.find_all("div")[1].find("div").text.strip()
+                    history.append({"id": t_id, "name": name_text})
+                except: continue
+
+        return {"image_url": image_url, "country_code": country_code, "history": history}
+    except Exception as e:
+        print(f"Error fetching player {player_id}: {e}")
         return {}
-        
-    soup = BeautifulSoup(response.text, "html.parser")
-    data = {"image_url": None, "real_name": None, "country_code": None}
-    
-    # Image
-    avatar_img = soup.select_one('.wf-avatar img')
-    if avatar_img and avatar_img.get('src'):
-        src = avatar_img['src']
-        if "owcdn.net" in src:
-            data["image_url"] = f"https:{src}" if src.startswith('//') else src
-            
-    # Real Name
-    real_name_div = soup.select_one('.player-real-name')
-    if real_name_div:
-        data["real_name"] = real_name_div.text.strip()
-        
-    # Country (usually inside an i.flag tag)
-    flag_i = soup.select_one('.player-header i.flag')
-    if flag_i and flag_i.get('class'):
-        # Extract country code from classes like 'flag', 'mod-us'
-        classes = flag_i.get('class')
-        for c in classes:
-            if c.startswith('mod-') and len(c) == 6:
-                data["country_code"] = c.replace('mod-', '').upper()
-                break
-                
-    return data
 
-def load_to_database(team_name, players_data):
-    """Inserts teams, players, and rosters into PostgreSQL."""
+def populate_database():
+    """Scrape VLR.gg and populate the PostgreSQL database with DEEP connections."""
     conn = get_db_connection()
     cur = conn.cursor()
-    try:
-        # Insert Team
-        cur.execute("""
-            INSERT INTO teams (name, region) 
-            VALUES (%s, %s)
-            ON CONFLICT (name) DO UPDATE SET region = EXCLUDED.region
-            RETURNING id;
-        """, (team_name, "Global"))
-        team_id = cur.fetchone()[0]
-        
-        for p in players_data:
-            # Insert Player
-            cur.execute("""
-                INSERT INTO players (nickname, real_name, country_code, image_url, aliases)
-                VALUES (%s, %s, %s, %s, %s)
-                ON CONFLICT (nickname) DO UPDATE 
-                SET real_name = EXCLUDED.real_name,
-                    country_code = EXCLUDED.country_code,
-                    image_url = EXCLUDED.image_url
-                RETURNING id;
-            """, (p['nickname'], p.get('real_name'), p.get('country_code'), p.get('image_url'), [p['nickname']]))
-            player_id = cur.fetchone()[0]
-            
-            # Insert Roster
-            cur.execute("""
-                INSERT INTO rosters (player_id, team_id, year_start, is_standin, role, maps_played)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                ON CONFLICT DO NOTHING;
-            """, (player_id, team_id, 2024, False, p.get('role', 'Player'), 10))
-            
-        conn.commit()
-        print(f"Successfully loaded team {team_name} and its players into DB.")
-    except Exception as e:
-        conn.rollback()
-        print(f"Error loading data for {team_name}: {e}")
-    finally:
-        cur.close()
-        conn.close()
-
-def main():
-    print("--- SpikeLink.gg ETL Script (VLR.gg) ---")
+    fix_schema(cur)
+    conn.commit()
     
-    for team_id, team_name in TOP_TEAMS.items():
-        print(f"\nProcessing Team: {team_name}")
+    print(f"Starting DEEP ETL for {len(TOP_TEAMS)} teams...")
+    
+    for team_id in TOP_TEAMS:
         try:
-            players = fetch_vlr_team(team_id)
-            print(f"Found {len(players)} active players for {team_name}.")
+            url = f"https://www.vlr.gg/team/{team_id}"
+            res = requests.get(url, headers=HEADERS)
+            soup = BeautifulSoup(res.content, "html.parser")
+            title_tag = soup.find("h1", class_="wf-title")
+            if not title_tag: continue
+            team_name = title_tag.text.strip()
             
-            for player in players:
-                print(f"  Fetching player: {player['nickname']}...")
-                details = fetch_vlr_player(player["player_url"])
-                player.update(details)
-                # Polite small delay
-                time.sleep(0.5)
+            print(f"\n--- Processing Team: {team_name} ---")
+            
+            cur.execute("INSERT INTO teams (id, name, region) VALUES (%s, %s, %s) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name", (team_id, team_name, "VLR_GLOBAL"))
+            
+            player_cards = soup.find_all("div", class_="team-roster-item")
+            for card in player_cards:
+                vlr_link = card.find("a")
+                if not vlr_link: continue
+                p_vlr_id = vlr_link['href'].split('/')[2]
+                p_nick = card.find("div", class_="team-roster-item-name-alias").text.strip()
+                p_real = card.find("div", class_="team-roster-item-name-real").text.strip() if card.find("div", class_="team-roster-item-name-real") else None
                 
-            load_to_database(team_name, players)
+                print(f"  > Player: {p_nick} (VLR: {p_vlr_id})")
+                details = fetch_vlr_player_details(p_vlr_id)
+                
+                cur.execute("""
+                    INSERT INTO players (vlr_id, nickname, real_name, country_code, image_url)
+                    VALUES (%s, %s, %s, %s, %s)
+                    ON CONFLICT (vlr_id) DO UPDATE SET
+                        nickname = EXCLUDED.nickname,
+                        real_name = EXCLUDED.real_name,
+                        image_url = COALESCE(EXCLUDED.image_url, players.image_url),
+                        country_code = EXCLUDED.country_code
+                    RETURNING id
+                """, (p_vlr_id, p_nick, p_real, details.get("country_code"), details.get("image_url")))
+                player_db_id = cur.fetchone()[0]
+                
+                # History (Bridges)
+                for hist in details.get("history", []):
+                    h_team_id, h_team_name = hist['id'], hist['name']
+                    # Historical teams insert: handle ID conflict only (name can be duplicate with different ID)
+                    cur.execute("INSERT INTO teams (id, name, region) VALUES (%s, %s, %s) ON CONFLICT (id) DO NOTHING", (h_team_id, h_team_name, "VLR_HISTORY"))
+                    cur.execute("INSERT INTO rosters (player_id, team_id, year_start) VALUES (%s, %s, 2024) ON CONFLICT DO NOTHING", (player_db_id, h_team_id))
+            
+            conn.commit()
+            time.sleep(1)
         except Exception as e:
-            print(f"Failed processing {team_name}: {e}")
-        
-    print("\nETL process completed successfully.")
+            print(f"Error processing team {team_id}: {e}")
+            conn.rollback()
 
-if __name__ == '__main__':
-    main()
+    cur.close()
+    conn.close()
+    print("\nDEEP ETL complete. Global connections established.")
+
+if __name__ == "__main__":
+    populate_database()

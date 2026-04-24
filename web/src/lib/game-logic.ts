@@ -298,3 +298,27 @@ export async function getTargetMatchNodes(): Promise<{ start: PlayerData; target
   return { start: startPlayer, target: targetNodes[0] as unknown as PlayerData };
 }
 
+/**
+ * Verifies if a list of player IDs forms a valid chain of shared teammates.
+ */
+export async function verifyChain(playerIds: number[]): Promise<boolean> {
+  if (!playerIds || playerIds.length < 2) return false;
+
+  for (let i = 0; i < playerIds.length - 1; i++) {
+    const p1 = playerIds[i];
+    const p2 = playerIds[i + 1];
+
+    const shared = await sql`
+      SELECT 1 FROM rosters r1
+      JOIN rosters r2 ON r1.team_id = r2.team_id
+      WHERE r1.player_id = ${p1} AND r2.player_id = ${p2}
+      LIMIT 1
+    `;
+
+    if (!shared.length) return false;
+  }
+
+  return true;
+}
+
+
