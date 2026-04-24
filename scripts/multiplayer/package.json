@@ -1,0 +1,11 @@
+{
+  "name": "multiplayer",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "socket-server.mjs",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "postgres": "^3.4.4",
+    "socket.io": "^4.7.5"
+  }
+}

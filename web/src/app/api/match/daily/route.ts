@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import sql from "@/lib/db";
-import { getRandomStartNode } from "@/lib/game-logic";
+import { getTargetMatchNodes } from "@/lib/game-logic";
 
 /**
  * GET /api/match/daily
  * Daily Challenge Mode
  * Uses a deterministic seed (based on current date YYYY-MM-DD) to select
- * the exact same starting player for everyone globally.
+ * the exact same starting player and target for everyone globally.
  */
 export async function GET() {
   try {
@@ -19,27 +19,30 @@ export async function GET() {
     }
     const seed = Math.abs(hash);
 
-    // Get a player deterministically using Postgres SETSEED
-    await sql`SELECT setseed(${seed / 2147483647})`; // Postgres setseed expects float [-1, 1]
+    // Get a pair deterministically using Postgres SETSEED
+    await sql`SELECT setseed(${seed / 2147483647})`;
     
-    const startPlayer = await getRandomStartNode(5);
+    const nodes = await getTargetMatchNodes();
 
-    if (!startPlayer) {
+    if (!nodes) {
       return NextResponse.json(
         { error: "No suitable starting player found." },
         { status: 503 }
       );
     }
 
+    const { start: startPlayer, target: targetPlayer } = nodes;
     const sessionId = `daily-${today}`;
 
     return NextResponse.json({
       sessionId,
       mode: "daily",
       startPlayer,
+      targetPlayer,
       timeLimit: 15,
       date: today
     });
+
   } catch (error) {
     console.error("Daily match error:", error);
     return NextResponse.json(

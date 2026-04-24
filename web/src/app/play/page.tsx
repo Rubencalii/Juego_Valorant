@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useSocket } from "@/hooks/use-socket";
 import { PlayerCard } from "@/components/PlayerCard";
 import { Timer } from "@/components/Timer";
 import { SearchInput } from "@/components/SearchInput";
@@ -42,12 +44,19 @@ export default function PlayPageWrapper() {
 }
 
 function PlayPage() {
+  const { data: session } = useSession();
+  const socket = useSocket();
   const searchParams = useSearchParams();
   const mode = searchParams.get("mode") || "bot";
+  const roomId = searchParams.get("roomId");
+  const eloBet = parseInt(searchParams.get("bet") || "0");
+  const startIdParam = searchParams.get("startId");
+  const targetIdParam = searchParams.get("targetId");
 
   // Game state
   const [gameState, setGameState] = useState<GameState>("loading");
   const [currentPlayer, setCurrentPlayer] = useState<PlayerData | null>(null);
+  const [targetPlayer, setTargetPlayer] = useState<PlayerData | null>(null);
 
   const [chain, setChain] = useState<ChainNode[]>([]);
   const [usedPlayerIds, setUsedPlayerIds] = useState<number[]>([]);
@@ -67,10 +76,41 @@ function PlayPage() {
   const [isVerifying, setIsVerifying] = useState(false);
 
   // Initialize game
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     startNewGame();
-  }, []);
+
+    if (mode === "pvp" && socket) {
+      socket.on("opponent_move", (data) => {
+        // We could show what the opponent did, or just update the current player
+        // For now, let's just update the game state to reflect the new shared player
+        setToast(createToast("success", `OPONENTE → VIA ${data.sharedTeam}`, `${data.newNickname}`));
+        setCurrentPlayer({
+          id: data.newPlayerId,
+          nickname: data.newNickname,
+          real_name: null,
+          country_code: null,
+          image_url: null // We might need to fetch the full data if we want images
+        });
+        setUsedPlayerIds((prev) => [...prev, data.newPlayerId]);
+        setChain((prev) => [...prev, { playerId: data.newPlayerId, nickname: data.newNickname, sharedTeam: data.sharedTeam }]);
+        setTimeLeft(15);
+        setIsPlayerTurn(true);
+      });
+
+      socket.on("game_over", ({ winnerId }) => {
+        if (winnerId !== (session?.user as any)?.id) {
+          handleGameOver("lose");
+        }
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off("opponent_move");
+        socket.off("game_over");
+      }
+    };
+  }, [mode, socket, session]);
 
   const startNewGame = async () => {
     setGameState("loading");
@@ -84,14 +124,33 @@ function PlayPage() {
 
     try {
       const isDaily = mode === "daily";
-      const endpoint = isDaily ? "/api/match/daily" : "/api/match/start";
-      const fetchOptions = isDaily 
+      const isPvp = mode === "pvp";
+      
+      let endpoint = isDaily ? "/api/match/daily" : "/api/match/start";
+      let fetchOptions: any = isDaily 
         ? { method: "GET" } 
         : { 
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ mode }),
           };
+
+      // Special case for PVP: fetch the specific players agreed upon via socket
+      if (isPvp && startIdParam && targetIdParam) {
+        // We can just fetch the players by ID directly to be safe
+        const resStart = await fetch(`/api/players/${startIdParam}`);
+        const resTarget = await fetch(`/api/players/${targetIdParam}`);
+        const dataStart = await resStart.json();
+        const dataTarget = await resTarget.json();
+        
+        setCurrentPlayer(dataStart);
+        setTargetPlayer(dataTarget);
+        setUsedPlayerIds([dataStart.id]);
+        setChain([{ playerId: dataStart.id, nickname: dataStart.nickname }]);
+        setGameState("playing");
+        setTimerActive(true);
+        return;
+      }
 
       const res = await fetch(endpoint, fetchOptions);
 
@@ -103,7 +162,9 @@ function PlayPage() {
       }
 
       const player = data.startPlayer;
+      const target = data.targetPlayer;
       setCurrentPlayer(player);
+      setTargetPlayer(target);
       setUsedPlayerIds([player.id]);
       setChain([{ playerId: player.id, nickname: player.nickname }]);
       setGameState("playing");
@@ -113,11 +174,40 @@ function PlayPage() {
     }
   };
 
-  const handleGameOver = useCallback((reason: "win" | "lose" | "timeout") => {
+  const handleGameOver = useCallback(async (reason: "win" | "lose" | "timeout") => {
     setTimerActive(false);
     setResult(reason);
     setGameState("game_over");
-  }, []);
+
+    // Save result if authenticated
+    if (session?.user) {
+      if (mode === "pvp" && reason === "win") {
+        socket?.emit("win_match", {
+          roomId,
+          userId: (session.user as any).id,
+          chainLength: chain.length,
+          durationSecs: Math.floor((Date.now() - startTimeRef.current) / 1000),
+          chainNodes: chain.map(n => n.playerId)
+        });
+      } else if (mode !== "pvp") {
+        try {
+          await fetch("/api/match/save", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              mode,
+              chainLength: chain.length,
+              result: reason === "win" ? "win" : "lose",
+              durationSecs: Math.floor((Date.now() - startTimeRef.current) / 1000),
+              chainNodes: chain.map(n => n.playerId),
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to save match result:", error);
+        }
+      }
+    }
+  }, [session, mode, chain, startTimeRef]);
 
   // Timer countdown
   useEffect(() => {
@@ -163,13 +253,29 @@ function PlayPage() {
         setCurrentPlayer(newPlayer);
         setUsedPlayerIds((prev) => [...prev, newPlayer.id]);
         setChain((prev) => [...prev, { playerId: newPlayer.id, nickname: newPlayer.nickname, sharedTeam: data.sharedTeam }]);
-        setTimeLeft(15); // Reset timer on correct guess
+        setTimeLeft(15);
 
-        // In bot mode, trigger bot turn
+        // Check if TARGET reached
+        if (newPlayer.id === targetPlayer?.id) {
+          handleGameOver("win");
+          return;
+        }
+
+        // Handle Mode specific transitions
         if (mode === "bot") {
           setIsPlayerTurn(false);
           setGameState("bot_thinking");
           setTimeout(() => handleBotTurn(newPlayer.id, [...usedPlayerIds, newPlayer.id]), 1500 + Math.random() * 1000);
+        } else if (mode === "pvp") {
+          setIsPlayerTurn(false);
+          socket?.emit("submit_move", {
+            roomId,
+            playerId: currentPlayer.id,
+            nickname: currentPlayer.nickname,
+            newPlayerId: newPlayer.id,
+            newNickname: newPlayer.nickname,
+            sharedTeam: data.sharedTeam
+          });
         }
       } else {
         // ❌ Connection failed
@@ -217,6 +323,13 @@ function PlayPage() {
         setUsedPlayerIds((prev) => [...prev, data.player.id]);
         setChain((prev) => [...prev, { playerId: data.player.id, nickname: data.player.nickname, sharedTeam: data.sharedTeam }]);
         setTimeLeft(15);
+
+        // Check if TARGET reached by BOT
+        if (data.player.id === targetPlayer?.id) {
+          handleGameOver("lose"); // BOT reached it first!
+          return;
+        }
+
         setIsPlayerTurn(true);
         setGameState("playing");
       } else {
@@ -325,14 +438,25 @@ function PlayPage() {
               />
             </div>
 
-            {/* Opponent / Unknown */}
-            <div className={`${gameState === "bot_thinking" ? "opacity-70 animate-pulse" : "opacity-50 grayscale"} transition-all`}>
-              <PlayerCard
-                nickname={gameState === "bot_thinking" ? "SCANNING..." : "???"}
-                role={gameState === "bot_thinking" ? "PROCESSING" : "UNKNOWN"}
-                kd="—"
-                isOnline={gameState === "bot_thinking"}
-              />
+            {/* Opponent / Target */}
+            <div className={`${gameState === "bot_thinking" ? "opacity-70 animate-pulse scale-[1.02]" : ""} transition-all`}>
+              {targetPlayer ? (
+                <PlayerCard
+                  nickname={targetPlayer.nickname}
+                  realName={targetPlayer.real_name || undefined}
+                  role={targetPlayer.role || targetPlayer.current_team || "TARGET"}
+                  kd="META"
+                  isOnline={false}
+                  imageUrl={targetPlayer.image_url || undefined}
+                />
+              ) : (
+                <PlayerCard
+                  nickname={gameState === "bot_thinking" ? "SCANNING..." : "???"}
+                  role={gameState === "bot_thinking" ? "PROCESSING" : "UNKNOWN"}
+                  kd="—"
+                  isOnline={gameState === "bot_thinking"}
+                />
+              )}
             </div>
           </div>
 
