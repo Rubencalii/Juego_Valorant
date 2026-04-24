@@ -1,109 +1,204 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { PlayerCard } from '@/components/PlayerCard';
-import { Timer } from '@/components/Timer';
-import { SearchInput } from '@/components/SearchInput';
-import { motion } from 'framer-motion';
-import { useSession, signOut } from "next-auth/react";
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 
-export default function GamePage() {
+const GAME_MODES = [
+  {
+    id: "bot",
+    title: "ENTRENAMIENTO",
+    subtitle: "VS BOT",
+    description: "Practica contra la IA. Perfecto para aprender las conexiones.",
+    icon: "🤖",
+    href: "/play?mode=bot",
+    color: "#02e600",
+    available: true,
+  },
+  {
+    id: "daily",
+    title: "CADENA DEL DÍA",
+    subtitle: "DAILY CHALLENGE",
+    description: "Cadena diaria compartida. ¿Cuántos nodos puedes conectar?",
+    icon: "📅",
+    href: "/play?mode=daily",
+    color: "#FFB3B2",
+    available: true,
+  },
+  {
+    id: "pvp_private",
+    title: "1V1 PRIVADO",
+    subtitle: "PRIVATE LINK",
+    description: "Genera un link y desafía a un amigo en tiempo real.",
+    icon: "🔗",
+    href: "#",
+    color: "#FF4655",
+    available: false,
+  },
+  {
+    id: "matchmaking",
+    title: "MATCHMAKING",
+    subtitle: "RANKED PVP",
+    description: "Emparejamiento por ELO. Demuestra quién sabe más.",
+    icon: "🎮",
+    href: "#",
+    color: "#FF4655",
+    available: false,
+  },
+];
+
+export default function HubPage() {
   const { data: session, status } = useSession();
-  const [timeLeft, setTimeLeft] = useState(15);
-  const [isActive, setIsActive] = useState(true);
-
-  // Mock decrement timer
-  useEffect(() => {
-    if (isActive && timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0) {
-      setIsActive(false);
-    }
-  }, [timeLeft, isActive]);
-
-  const handleTurn = (guess: string) => {
-    console.log("Jugador intento conectar con:", guess);
-    setTimeLeft(15);
-  };
 
   return (
-    <main className="min-h-screen bg-[#0f1923] text-[#ece8e1] flex flex-col p-4 relative overflow-hidden font-sans">
-      <div className="absolute inset-0 pointer-events-none opacity-20 scanline z-50"></div>
-      
-      {/* Header / Navbar */}
-      <header className="relative z-20 flex justify-between items-center w-full max-w-6xl mx-auto py-4 border-b border-[#ece8e1]/10">
-        <div className="font-black text-[#ff4655] text-xl tracking-tighter italic uppercase">
-          SPIKELINK<span className="text-[#ece8e1]">.GG</span>
+    <main className="min-h-screen bg-[#0f1923] text-[#ece8e1] flex flex-col relative overflow-hidden font-body">
+      {/* Scanline overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] scanline z-50" />
+
+      {/* Diagonal background pattern */}
+      <div className="absolute inset-0 pointer-events-none diagonal-bg opacity-100" />
+
+      <div className="w-full max-w-5xl mx-auto px-4 pt-28 pb-32 relative z-10">
+        {/* Hero Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mb-16"
+        >
+          <div className="text-[10px] font-display font-bold text-[#FF4655] uppercase tracking-[0.5em] mb-4">
+            <span className="inline-block w-2 h-2 bg-[#FF4655] animate-pulse mr-2" />
+            SPIKELINK_OS://V.1.0 // 
+            {status === "authenticated" 
+              ? `AGENT: ${session?.user?.name?.toUpperCase()}`
+              : "SESSION: GUEST"
+            }
+          </div>
+
+          <h1 className="font-display font-black text-5xl md:text-7xl uppercase tracking-tight italic mb-4">
+            SPIKE<span className="text-[#FF4655]">LINK</span>
+          </h1>
+
+          <p className="font-body text-[#ECE8E1]/50 text-sm md:text-base max-w-xl mx-auto">
+            Conecta jugadores profesionales de Valorant que hayan compartido equipo. 
+            Cada conexión correcta reinicia el reloj. Un error significa la derrota.
+          </p>
+        </motion.div>
+
+        {/* Game Mode Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+          {GAME_MODES.map((mode, index) => (
+            <motion.div
+              key={mode.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
+              {mode.available ? (
+                <Link href={mode.href} className="block group">
+                  <GameModeCard mode={mode} />
+                </Link>
+              ) : (
+                <div className="opacity-50 cursor-not-allowed">
+                  <GameModeCard mode={mode} />
+                </div>
+              )}
+            </motion.div>
+          ))}
         </div>
-        
-        <div className="flex items-center gap-6">
-          {status === "authenticated" ? (
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <div className="text-[10px] font-black text-[#ff4655] uppercase tracking-widest">AGENTE AUTORIZADO</div>
-                <div className="text-sm font-bold uppercase">{session.user?.name}</div>
-              </div>
-              <button 
-                onClick={() => signOut()}
-                className="bg-[#ff4655] text-[#ece8e1] px-4 py-2 text-xs font-black uppercase tracking-widest hover:bg-[#ff4655]/80 transition-all"
-              >
-                LOGOUT
-              </button>
+
+        {/* Stats preview if logged in */}
+        {status === "authenticated" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="border border-[#ECE8E1]/10 bg-[#17202b] p-6"
+          >
+            <div className="text-[10px] font-display font-bold text-[#ECE8E1]/40 uppercase tracking-[0.3em] mb-4">
+              AGENT STATS // {session?.user?.name?.toUpperCase()}
             </div>
-          ) : (
-            <div className="flex items-center gap-4">
-              <Link 
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <StatBox label="ELO" value="1000" />
+              <StatBox label="WINS" value="0" />
+              <StatBox label="BEST CHAIN" value="0" />
+              <StatBox label="MATCHES" value="0" />
+            </div>
+          </motion.div>
+        )}
+
+        {/* Guest CTA */}
+        {status === "unauthenticated" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-center border border-[#ECE8E1]/10 bg-[#17202b] p-8"
+          >
+            <p className="font-display text-xs uppercase tracking-widest text-[#ECE8E1]/50 mb-4">
+              Inicia sesión para guardar tu progreso y competir en el ranking
+            </p>
+            <div className="flex justify-center gap-3">
+              <Link
                 href="/login"
-                className="text-[#ece8e1] hover:text-[#ff4655] text-xs font-black uppercase tracking-widest transition-all"
+                className="font-display font-black text-xs uppercase tracking-[0.2em] text-[#FF4655] border border-[#FF4655] px-6 py-2 hover:bg-[#FF4655]/10 transition-all"
               >
                 LOGIN
               </Link>
-              <Link 
+              <Link
                 href="/register"
-                className="bg-[#ff4655] text-[#ece8e1] px-4 py-2 text-xs font-black uppercase tracking-widest hover:bg-[#ff4655]/80 transition-all"
+                className="font-display font-black text-xs uppercase tracking-[0.2em] bg-[#FF4655] text-[#ECE8E1] px-6 py-2 hover:bg-[#FF4655]/90 transition-all"
               >
-                REGÍSTRATE
+                REGISTER
               </Link>
             </div>
-          )}
-        </div>
-      </header>
-
-      <div className="absolute top-24 left-6 font-bold text-[#ff4655] text-[10px] flex items-center gap-2 mix-blend-screen opacity-60 uppercase tracking-[0.3em]">
-        <span className="w-2 h-2 bg-[#ff4655] animate-pulse"></span>
-        SPIKELINK_OS://V.1.0 // SESSION_ID: {status === "authenticated" ? "AUTHORIZED" : "GUEST"}
-      </div>
-
-      <div className="w-full max-w-4xl mx-auto flex flex-col items-center relative z-10 mt-10">
-        <Timer timeLeft={timeLeft} />
-        
-        <div className="relative w-full flex flex-col md:flex-row items-center justify-center gap-2 md:gap-32 mt-12 mb-8">
-          <PlayerCard 
-            nickname="Boaster" 
-            realName="Jake Howlett" 
-            role="IGL" 
-            kd="1.0" 
-            isOnline={true} 
-            imageUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/FNATIC_logo.svg/2048px-FNATIC_logo.svg.png"
-          />
-
-          <div className="md:absolute top-1/2 left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 flex items-center justify-center -my-8 md:my-0 z-20">
-             <motion.div 
-               className="w-4 h-4 bg-[#ff4655] rotate-45 border border-[#ece8e1]/20 shadow-[0_0_15px_rgba(255,70,85,0.5)]"
-               animate={{ scale: [1, 1.3, 1], rotate: 45 }}
-               transition={{ repeat: Infinity, duration: 1.5 }}
-            />
-          </div>
-
-          <div className="opacity-50 grayscale scale-95 blur-[1px]">
-             <PlayerCard nickname="???" role="Unknown" kd="0.0" isOnline={false} />
-          </div>
-        </div>
-
-        <SearchInput onSearch={handleTurn} />
+          </motion.div>
+        )}
       </div>
     </main>
+  );
+}
+
+function GameModeCard({ mode }: { mode: typeof GAME_MODES[0] }) {
+  return (
+    <div className="relative bg-[#17202b] border border-[#ECE8E1]/10 p-6 group-hover:border-[#FF4655]/50 transition-all overflow-hidden">
+      {/* Corner accent */}
+      <div 
+        className="absolute top-0 right-0 w-12 h-12 opacity-20 transition-opacity group-hover:opacity-40"
+        style={{ background: `linear-gradient(135deg, transparent 50%, ${mode.color} 50%)` }}
+      />
+
+      <div className="flex items-start gap-4">
+        <span className="text-3xl">{mode.icon}</span>
+        <div className="flex-1">
+          <div className="font-display font-black text-xl uppercase tracking-tight text-[#ECE8E1] group-hover:text-[#FF4655] transition-colors">
+            {mode.title}
+          </div>
+          <div className="font-display text-[10px] uppercase tracking-[0.3em] text-[#ECE8E1]/30 mb-2">
+            {mode.subtitle}
+          </div>
+          <p className="font-body text-xs text-[#ECE8E1]/50 leading-relaxed">
+            {mode.description}
+          </p>
+        </div>
+      </div>
+
+      {!mode.available && (
+        <div className="absolute bottom-3 right-3 font-display text-[10px] uppercase tracking-widest text-[#FF4655]/60 font-bold">
+          PRÓXIMAMENTE
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="text-center">
+      <div className="font-display text-[10px] uppercase tracking-widest text-[#ECE8E1]/40 mb-1">
+        {label}
+      </div>
+      <div className="font-display font-black text-2xl text-[#ECE8E1]">{value}</div>
+    </div>
   );
 }

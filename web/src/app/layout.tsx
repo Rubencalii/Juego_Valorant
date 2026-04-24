@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { Navbar } from "@/components/Navbar";
 
 const inter = Inter({ 
   subsets: ["latin"], 
@@ -14,8 +15,9 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "SpikeLink.gg - Valorant Connections",
-  description: "Can you link the pros?",
+  title: "SpikeLink.gg — Valorant Connections Game",
+  description: "Connect Valorant pros who shared a team. Beat the clock. Outsmart the bot. Climb the ranks.",
+  keywords: ["valorant", "esports", "game", "connections", "pro players"],
 };
 
 export default function RootLayout({
@@ -27,6 +29,7 @@ export default function RootLayout({
     <html lang="es" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="font-body antialiased">
         <Providers>
+          <Navbar />
           {children}
         </Providers>
       </body>
