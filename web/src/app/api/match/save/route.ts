@@ -61,11 +61,12 @@ export async function POST(req: NextRequest) {
       eloChange = -5;
     }
 
-    // 2. Update User ELO and Save Match
+    // 2. Update User ELO and Stats
     const finalElo = await sql.begin(async (sql) => {
       await sql`
         UPDATE users 
-        SET elo = GREATEST(0, elo + ${eloChange})
+        SET elo = GREATEST(0, elo + ${eloChange}),
+            total_points = total_points + ${Math.max(0, eloChange * 5)}
         WHERE id = ${userId}
       `;
 

@@ -31,6 +31,28 @@ TOP_TEAMS = [
     1120, 12010, 1119, 731, 13576, 11985, 11981
 ]
 
+def get_vct_team_ids():
+    """Fetches VCT team IDs from rankings for all major regions."""
+    regions = ["north-america", "europe", "asia-pacific", "china", "brazil", "latin-america-north", "latin-america-south", "korea", "japan"]
+    all_ids = []
+    print("Fetching global team IDs from rankings...")
+    for region in regions:
+        url = f"https://www.vlr.gg/rankings/{region}"
+        try:
+            res = requests.get(url, headers=HEADERS)
+            soup = BeautifulSoup(res.content, "html.parser")
+            # Find the top 20 teams in each region
+            team_rows = soup.find_all("div", class_="rank-item")[:20]
+            for row in team_rows:
+                link = row.find("a", class_="rank-item-team")
+                if link:
+                    t_id = link['href'].split('/')[2]
+                    all_ids.append(int(t_id))
+            print(f"  > Found {len(team_rows)} teams in {region}")
+        except Exception as e:
+            print(f"  > Error fetching {region}: {e}")
+    return list(set(all_ids))
+
 def get_db_connection():
     """Establish and return a connection to the PostgreSQL database."""
     return psycopg2.connect(
@@ -89,7 +111,18 @@ def fetch_vlr_player_details(player_id):
                     history.append({"id": t_id, "name": name_text})
                 except: continue
 
-        return {"image_url": image_url, "country_code": country_code, "history": history}
+        # Role and Status
+        role = None
+        status_tag = soup.find("div", class_="player-header-role")
+        if status_tag:
+            role = status_tag.text.strip()
+        
+        # Check if retired (often in the header or subtext)
+        is_retired = "Retired" in soup.text
+        if is_retired:
+            role = "Retired"
+
+        return {"image_url": image_url, "country_code": country_code, "history": history, "role": role}
     except Exception as e:
         print(f"Error fetching player {player_id}: {e}")
         return {}
@@ -98,12 +131,16 @@ def populate_database():
     """Scrape VLR.gg and populate the PostgreSQL database with DEEP connections."""
     conn = get_db_connection()
     cur = conn.cursor()
+    print("Initializing production database tables...")
     fix_schema(cur)
     conn.commit()
     
-    print(f"Starting DEEP ETL for {len(TOP_TEAMS)} teams...")
+    dynamic_teams = get_vct_team_ids()
+    target_teams = list(set(TOP_TEAMS + dynamic_teams))
     
-    for team_id in TOP_TEAMS:
+    print(f"Starting GLOBAL ETL for {len(target_teams)} teams...")
+    
+    for team_id in target_teams:
         try:
             url = f"https://www.vlr.gg/team/{team_id}"
             res = requests.get(url, headers=HEADERS)
@@ -144,7 +181,7 @@ def populate_database():
                     h_team_id, h_team_name = hist['id'], hist['name']
                     # Historical teams insert: handle ID conflict only (name can be duplicate with different ID)
                     cur.execute("INSERT INTO teams (id, name, region) VALUES (%s, %s, %s) ON CONFLICT (id) DO NOTHING", (h_team_id, h_team_name, "VLR_HISTORY"))
-                    cur.execute("INSERT INTO rosters (player_id, team_id, year_start) VALUES (%s, %s, 2024) ON CONFLICT DO NOTHING", (player_db_id, h_team_id))
+                    cur.execute("INSERT INTO rosters (player_id, team_id, year_start, role) VALUES (%s, %s, 2024, %s) ON CONFLICT DO NOTHING", (player_db_id, h_team_id, details.get("role")))
             
             conn.commit()
             time.sleep(1)

@@ -32,16 +32,18 @@ export async function GET(req: NextRequest) {
       const countResult = await sql`SELECT COUNT(*) AS count FROM users`;
       total = countResult[0]?.count || 0;
     } else {
-      // Global: by ELO
+      // Global: by ELO or points
+      const sortBy = req.nextUrl.searchParams.get("sort") === "points" ? "total_points" : "elo";
+      
       users = await sql`
-        SELECT u.id, u.nickname, u.avatar_url, u.elo,
+        SELECT id, nickname, avatar_url, elo, total_points,
           COUNT(m.id) AS total_matches,
           COUNT(CASE WHEN m.winner_id = u.id THEN 1 END) AS wins,
           MAX(m.chain_length) AS best_chain
         FROM users u
         LEFT JOIN matches m ON (m.player1_id = u.id OR m.player2_id = u.id)
-        GROUP BY u.id, u.nickname, u.avatar_url, u.elo
-        ORDER BY u.elo DESC
+        GROUP BY u.id, u.nickname, u.avatar_url, u.elo, u.total_points
+        ORDER BY ${sql(sortBy)} DESC
         LIMIT ${limit} OFFSET ${offset}
       `;
       const countResult = await sql`SELECT COUNT(*) AS count FROM users`;
@@ -59,6 +61,7 @@ export async function GET(req: NextRequest) {
         nickname: u.nickname,
         avatar_url: u.avatar_url,
         elo: u.elo,
+        total_points: u.total_points,
         total_matches: Number(u.total_matches),
         wins: Number(u.wins),
         best_chain: u.best_chain || 0,

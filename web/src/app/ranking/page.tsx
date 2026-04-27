@@ -17,19 +17,15 @@ type Scope = "global" | "weekly";
 
 export default function RankingPage() {
   const [scope, setScope] = useState<Scope>("global");
-  const [users, setUsers] = useState<RankedUser[]>([]);
+  const [sortBy, setSortBy] = useState<"elo" | "points">("elo");
+  const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    fetchRanking();
-  }, [scope, page]);
-
-  const fetchRanking = async () => {
+  const fetchRanking = React.useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/ranking?scope=${scope}&page=${page}&limit=20`);
+      const res = await fetch(`/api/ranking?scope=${scope}&page=${page}&limit=20&sort=${sortBy}`);
       const data = await res.json();
       setUsers(data.users || []);
     } catch {
@@ -37,7 +33,11 @@ export default function RankingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [scope, page, sortBy]);
+
+  useEffect(() => {
+    fetchRanking();
+  }, [fetchRanking]);
 
   return (
     <main className="min-h-screen bg-[#0f1923] text-[#ece8e1] relative overflow-hidden font-body">
@@ -59,29 +59,48 @@ export default function RankingPage() {
           </p>
         </motion.div>
 
-        {/* Scope tabs */}
-        <div className="flex gap-2 mb-6">
-          {(["global", "weekly"] as Scope[]).map((s) => (
-            <button
-              key={s}
-              onClick={() => { setScope(s); setPage(1); }}
-              className={`font-display font-bold text-xs uppercase tracking-[0.2em] px-4 py-2 transition-all border
-                ${scope === s
-                  ? "bg-[#FF4655] text-[#ECE8E1] border-[#FF4655]"
-                  : "text-[#ECE8E1]/50 border-[#ECE8E1]/10 hover:border-[#FF4655]/50"
-                }`}
-            >
-              {s === "global" ? "GLOBAL" : "SEMANAL"}
-            </button>
-          ))}
+        {/* Filters and Sort */}
+        <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+          <div className="flex gap-2">
+            {(["global", "weekly"] as Scope[]).map((s) => (
+              <button
+                key={s}
+                onClick={() => { setScope(s); setPage(1); }}
+                className={`font-display font-bold text-xs uppercase tracking-[0.2em] px-4 py-2 transition-all border
+                  ${scope === s
+                    ? "bg-[#FF4655] text-[#ECE8E1] border-[#FF4655]"
+                    : "text-[#ECE8E1]/50 border-[#ECE8E1]/10 hover:border-[#FF4655]/50"
+                  }`}
+              >
+                {s === "global" ? "GLOBAL" : "SEMANAL"}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex gap-2 bg-[#17202b] p-1 border border-[#ECE8E1]/10">
+            {(["elo", "points"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSortBy(s)}
+                className={`font-display font-bold text-[10px] uppercase tracking-[0.2em] px-3 py-1.5 transition-all
+                  ${sortBy === s
+                    ? "bg-[#ECE8E1] text-[#0f1923]"
+                    : "text-[#ECE8E1]/40 hover:text-[#ECE8E1]/70"
+                  }`}
+              >
+                ORDENAR POR {s === "elo" ? "ELO" : "PUNTOS"}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Table */}
         <div className="border border-[#ECE8E1]/10 bg-[#17202b] overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[60px_1fr_80px_80px_80px_80px] gap-2 px-4 py-3 border-b border-[#ECE8E1]/10 text-[10px] font-display font-bold uppercase tracking-widest text-[#ECE8E1]/40">
+          <div className="grid grid-cols-[60px_1fr_80px_80px_80px_80px_80px] gap-2 px-4 py-3 border-b border-[#ECE8E1]/10 text-[10px] font-display font-bold uppercase tracking-widest text-[#ECE8E1]/40">
             <span>#</span>
             <span>AGENTE</span>
+            <span className="text-right">PUNTOS</span>
             <span className="text-right">ELO</span>
             <span className="text-right">WINS</span>
             <span className="text-right hidden sm:block">MATCHES</span>
@@ -112,7 +131,7 @@ export default function RankingPage() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.03 }}
-              className={`grid grid-cols-[60px_1fr_80px_80px_80px_80px] gap-2 px-4 py-3 items-center border-l-2 transition-colors
+              className={`grid grid-cols-[60px_1fr_80px_80px_80px_80px_80px] gap-2 px-4 py-3 items-center border-l-2 transition-colors
                 ${user.rank <= 3
                   ? "border-[#FF4655] bg-[#FF4655]/5"
                   : "border-transparent hover:border-[#FF4655] hover:bg-[#212b35]"
@@ -124,6 +143,9 @@ export default function RankingPage() {
               </span>
               <span className="font-display font-bold text-sm uppercase tracking-tight truncate">
                 {user.nickname}
+              </span>
+              <span className="text-right font-mono text-sm text-[#FFD700] font-bold">
+                {user.total_points || 0}
               </span>
               <span className="text-right font-mono text-sm text-[#02e600] font-bold">
                 {user.elo}

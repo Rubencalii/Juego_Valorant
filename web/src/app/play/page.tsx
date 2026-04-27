@@ -10,6 +10,7 @@ import { SearchInput } from "@/components/SearchInput";
 import { ChainHistory } from "@/components/ChainHistory";
 import { ConnectionToast, createToast } from "@/components/ConnectionToast";
 import { GameOverModal } from "@/components/GameOverModal";
+import { Abilities } from "@/components/Abilities";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface PlayerData {
@@ -74,6 +75,39 @@ function PlayPage() {
 
   // Loading / search
   const [isVerifying, setIsVerifying] = useState(false);
+
+  // Abilities
+  const [abilitiesLeft, setAbilitiesLeft] = useState({ reveal: 1, wingman: 1 });
+
+  const handleUseHint = async (type: "reveal" | "wingman") => {
+    if (gameState !== "playing" || !currentPlayer || !isPlayerTurn) return;
+
+    try {
+      const res = await fetch("/api/match/hint", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          currentPlayerId: currentPlayer.id, 
+          usedPlayerIds,
+          targetPlayerId: targetPlayer?.id
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.player) {
+        if (type === "reveal") {
+          setToast(createToast("success", "SOVA REVEAL", `Equipo compartido: ${data.player.team_name}`));
+          setAbilitiesLeft(prev => ({ ...prev, reveal: prev.reveal - 1 }));
+        } else {
+          setToast(createToast("success", "GEKKO WINGMAN", `Prueba con: ${data.player.nickname}`));
+          setAbilitiesLeft(prev => ({ ...prev, wingman: prev.wingman - 1 }));
+        }
+      }
+    } catch (err) {
+      setToast(createToast("error", "Error al obtener ayuda", "SYS_ERROR"));
+    }
+  };
 
   // Initialize game
   useEffect(() => {
@@ -462,7 +496,14 @@ function PlayPage() {
 
           {/* Search Input — only when it's player's turn */}
           {isPlayerTurn && gameState === "playing" && (
-            <SearchInput onSearch={handleGuess} isLoading={isVerifying} />
+            <>
+              <SearchInput onSearch={handleGuess} isLoading={isVerifying} />
+              <Abilities 
+                onUseHint={handleUseHint} 
+                abilitiesLeft={abilitiesLeft} 
+                isDisabled={isVerifying}
+              />
+            </>
           )}
 
           {/* Chain History */}

@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   keywords: ["valorant", "esports", "game", "connections", "pro players"],
 };
 
+import { PageTransition } from "@/components/PageTransition";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,7 +32,9 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <Providers>
           <Navbar />
-          {children}
+          <PageTransition>
+            {children}
+          </PageTransition>
         </Providers>
       </body>
     </html>

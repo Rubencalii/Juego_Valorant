@@ -10,7 +10,7 @@ const sql = postgres(process.env.DATABASE_URL);
 const httpServer = createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.ALLOWED_ORIGIN || "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 });
@@ -211,6 +211,18 @@ socket.on("win_match", async ({ roomId, userId, chainLength, durationSecs, chain
     } catch (err) {
       console.error("Failed to update ELO for PVP match:", err);
     }
+  });
+
+  socket.on("global_chat_message", ({ userId, nickname, message }) => {
+    // Limit message length
+    const cleanMessage = message.substring(0, 200);
+    console.log(`[CHAT] ${nickname}: ${cleanMessage}`);
+    io.emit("global_chat_received", {
+      userId,
+      nickname,
+      message: cleanMessage,
+      timestamp: new Date().toISOString()
+    });
   });
 
   socket.on("disconnect", () => {

@@ -26,17 +26,17 @@ export function AutocompleteDropdown({ query, onSelect, isVisible }: Autocomplet
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (!query || query.length < 1 || !isVisible) {
+    if (!query || query.length < 2 || !isVisible) {
       setSuggestions([]);
       return;
     }
 
-    // Debounce 150ms (RF-11)
+    // Debounce 250ms for better performance
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/players?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/players?q=${encodeURIComponent(query)}&limit=8`);
         const data = await res.json();
         setSuggestions(data.players || []);
         setSelectedIndex(-1);

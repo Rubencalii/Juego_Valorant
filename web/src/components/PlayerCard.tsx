@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 interface PlayerCardProps {
   nickname: string;
@@ -9,7 +9,7 @@ interface PlayerCardProps {
   isOnline?: boolean;
 }
 
-export function PlayerCard({ nickname, realName, role, kd, imageUrl, isOnline }: PlayerCardProps) {
+export const PlayerCard = memo(function PlayerCard({ nickname, realName, role, kd, imageUrl, isOnline }: PlayerCardProps) {
   return (
     <div className="relative z-10 bg-surface-container border border-off-white/20 clip-card group w-[480px] min-w-[480px] h-[650px] shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-transform duration-500 hover:scale-[1.02]">
       {/* Decorative Corner Red Square */}
@@ -42,6 +42,7 @@ export function PlayerCard({ nickname, realName, role, kd, imageUrl, isOnline }:
         {/* Cinematic Overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40 z-10" />
+        <div className="absolute inset-0 scanline opacity-20 z-10 pointer-events-none" />
       </div>
 
       {/* Content Overlay */}
@@ -81,6 +82,6 @@ export function PlayerCard({ nickname, realName, role, kd, imageUrl, isOnline }:
       <div className="absolute top-8 left-8 w-16 h-2 border-t border-off-white/20 opacity-50" />
     </div>
   );
-}
+});
 
 

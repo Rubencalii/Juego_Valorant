@@ -30,7 +30,7 @@ export default function PVPPage() {
       setMode("waiting");
     });
 
-    socket.on("match_starting", async ({ host, guest, eloBet }) => {
+    socket.on("match_starting", async ({ eloBet: serverEloBet }) => {
       // Only the creator (who is already in the room state) fetches the initial data
       if (mode === "waiting") {
         try {
@@ -46,7 +46,7 @@ export default function PVPPage() {
             targetPlayer: data.targetPlayer 
           });
           
-          router.push(`/play?mode=pvp&roomId=${roomInfo?.id}&bet=${eloBet}&startId=${data.startPlayer.id}&targetId=${data.targetPlayer.id}`);
+          router.push(`/play?mode=pvp&roomId=${roomInfo?.id}&bet=${serverEloBet}&startId=${data.startPlayer.id}&targetId=${data.targetPlayer.id}`);
         } catch (err) {
           console.error("Failed to fetch PVP match data:", err);
         }
@@ -65,25 +65,28 @@ export default function PVPPage() {
     return () => {
       socket.off("room_created");
       socket.off("match_starting");
+      socket.off("match_data");
       socket.off("error");
     };
-  }, [socket, router, roomInfo, roomIdInput]);
+  }, [socket, router, roomInfo, roomIdInput, eloBet, mode]);
 
   const handleCreate = () => {
     if (!session?.user) return;
+    const user = session.user as { id: string; name?: string };
     socket?.emit("create_room", { 
-      userId: (session.user as any).id, 
-      nickname: session.user.name, 
+      userId: user.id, 
+      nickname: user.name, 
       eloBet 
     });
   };
 
   const handleJoin = () => {
     if (!session?.user || !roomIdInput) return;
+    const user = session.user as { id: string; name?: string };
     socket?.emit("join_room", { 
       roomId: roomIdInput.toUpperCase(), 
-      userId: (session.user as any).id, 
-      nickname: session.user.name 
+      userId: user.id, 
+      nickname: user.name 
     });
   };
 

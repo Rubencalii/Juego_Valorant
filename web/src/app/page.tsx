@@ -5,6 +5,7 @@ import React from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { GlobalChat } from "@/components/GlobalChat";
 
 const GAME_MODES = [
   {
@@ -47,6 +48,46 @@ const GAME_MODES = [
     color: "#02e600",
     available: true,
   },
+  {
+    id: "guess",
+    title: "ADIVINA AL AGENTE",
+    subtitle: "CLASSIC MODE",
+    description: "Adivina el jugador oculto del día basándote en sus atributos (Equipo, Región, País).",
+    icon: "🕵️",
+    href: "/play/guess",
+    color: "#FFB3B2",
+    available: true,
+  },
+  {
+    id: "grid",
+    title: "LA CUADRÍCULA",
+    subtitle: "IMMACULATE GRID",
+    description: "9 celdas, 9 desafíos. Rellena la cuadrícula con jugadores que cumplan ambas condiciones.",
+    icon: "🧱",
+    href: "/play/grid",
+    color: "#4da6c5",
+    available: true,
+  },
+  {
+    id: "higher_lower",
+    title: "¿MÁS O MENOS?",
+    subtitle: "HIGHER OR LOWER",
+    description: "¿Quién tiene más experiencia? Adivina si el siguiente jugador tiene más o menos mapas jugados.",
+    icon: "📈",
+    href: "/play/higher-lower",
+    color: "#02e600",
+    available: true,
+  },
+  {
+    id: "survival",
+    title: "CADENA COMPAÑEROS",
+    subtitle: "SURVIVAL MODE",
+    description: "¿Cuántos compañeros puedes encadenar sin repetir ni fallar? Pon a prueba tu memoria.",
+    icon: "🔗",
+    href: "/play/survival",
+    color: "#FF4655",
+    available: true,
+  },
 ];
 
 export default function HubPage() {
@@ -57,8 +98,19 @@ export default function HubPage() {
       {/* Scanline overlay */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] scanline z-50" />
 
-      {/* Diagonal background pattern */}
-      <div className="absolute inset-0 pointer-events-none diagonal-bg opacity-100" />
+      {/* Tech Overlays */}
+      <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-[#FF4655]/10 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#0f1923] to-transparent pointer-events-none" />
+      
+      {/* Animated geometric elements */}
+      <motion.div 
+        animate={{ 
+          rotate: 360,
+          opacity: [0.1, 0.2, 0.1]
+        }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+        className="absolute -top-24 -right-24 w-96 h-96 border border-[#FF4655]/20 rounded-full pointer-events-none"
+      />
 
       <div className="w-full max-w-5xl mx-auto px-4 pt-28 pb-32 relative z-10">
         {/* Hero Section */}
@@ -67,22 +119,32 @@ export default function HubPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <div className="text-[10px] font-display font-bold text-[#FF4655] uppercase tracking-[0.5em] mb-4">
-            <span className="inline-block w-2 h-2 bg-[#FF4655] animate-pulse mr-2" />
-            SPIKELINK_OS://V.1.0 // 
-            {status === "authenticated" 
-              ? `AGENT: ${session?.user?.name?.toUpperCase()}`
-              : "SESSION: GUEST"
-            }
+          <div className="text-[10px] font-display font-bold text-[#FF4655] uppercase tracking-[0.5em] mb-4 flex items-center justify-center gap-3">
+            <span className="inline-block w-8 h-[1px] bg-[#FF4655]/30" />
+            <span className="relative">
+              <span className="absolute -inset-1 blur-sm bg-[#FF4655]/20 animate-pulse" />
+              SPIKELINK_OS://V.1.0
+            </span>
+            <span className="inline-block w-8 h-[1px] bg-[#FF4655]/30" />
           </div>
 
-          <h1 className="font-display font-black text-5xl md:text-7xl uppercase tracking-tight italic mb-4">
-            SPIKE<span className="text-[#FF4655]">LINK</span>
+          <h1 className="font-display font-black text-6xl md:text-8xl uppercase tracking-tighter italic mb-4 relative group">
+            <span className="relative z-10">SPIKE<span className="text-[#FF4655]">LINK</span></span>
+            <motion.span 
+              animate={{ x: [-2, 2, -2], opacity: [0, 0.5, 0] }}
+              transition={{ duration: 0.2, repeat: Infinity }}
+              className="absolute inset-0 text-[#02e600] z-0 translate-x-1 opacity-50 hidden group-hover:block"
+            >
+              SPIKELINK
+            </motion.span>
           </h1>
 
-          <p className="font-body text-[#ECE8E1]/50 text-sm md:text-base max-w-xl mx-auto">
-            Conecta jugadores profesionales de Valorant que hayan compartido equipo. 
-            Cada conexión correcta reinicia el reloj. Un error significa la derrota.
+          <p className="font-body text-[#ECE8E1]/50 text-sm md:text-base max-w-xl mx-auto border-l border-[#FF4655]/50 pl-4 text-left md:text-center md:border-l-0 md:pl-0">
+            EL PROTOCOLO DE CONEXIÓN DE AGENTES HA SIDO INICIADO. 
+            <br />
+            <span className="text-[10px] opacity-50 tracking-widest mt-2 block italic">
+              CONECTA JUGADORES PROFESIONALES // EVITA EL ERROR DE SISTEMA
+            </span>
           </p>
         </motion.div>
 
@@ -91,9 +153,9 @@ export default function HubPage() {
           {GAME_MODES.map((mode, index) => (
             <motion.div
               key={mode.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05, duration: 0.3 }}
             >
               {mode.available ? (
                 <Link href={mode.href} className="block group">
@@ -155,6 +217,11 @@ export default function HubPage() {
             </div>
           </motion.div>
         )}
+
+        {/* Global Chat Section */}
+        <div className="mt-12">
+          <GlobalChat />
+        </div>
       </div>
     </main>
   );
